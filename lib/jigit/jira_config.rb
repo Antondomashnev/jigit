@@ -13,16 +13,16 @@ module Jigit
       self.host = host
     end
 
-    def self.store_store_config(config)
-      ENV['JIGIT_JIRA_CONFIG_USER'] = config.user
-      ENV['JIGIT_JIRA_CONFIG_PASSWORD'] = config.password
-      ENV['JIGIT_JIRA_CONFIG_HOST'] = config.host
+    def self.store_jira_config(config)
+      ENV["JIGIT_JIRA_CONFIG_USER"] = config.user
+      ENV["JIGIT_JIRA_CONFIG_PASSWORD"] = config.password
+      ENV["JIGIT_JIRA_CONFIG_HOST"] = config.host
     end
 
     def self.current_jira_config
-      user = ENV['JIGIT_JIRA_CONFIG_USER']
-      password = ENV['JIGIT_JIRA_CONFIG_PASSWORD']
-      host = ENV['JIGIT_JIRA_CONFIG_HOST']
+      user = ENV["JIGIT_JIRA_CONFIG_USER"]
+      password = ENV["JIGIT_JIRA_CONFIG_PASSWORD"]
+      host = ENV["JIGIT_JIRA_CONFIG_HOST"]
       if user && password && host
         return JiraConfig.new(user, password, host)
       else

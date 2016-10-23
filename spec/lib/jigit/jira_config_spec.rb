@@ -20,4 +20,54 @@ describe Jigit::JiraConfig do
       end
     end
   end
+
+  context "when store config" do
+    before do
+      @config = Jigit::JiraConfig.new("superman", "1234567890", "my.jira.com")
+    end
+
+    it "saves name in ENV" do
+      allow(ENV).to receive(:[]).with("JIGIT_JIRA_CONFIG_USER").and_return(nil)
+      Jigit::JiraConfig.store_jira_config(@config)
+    end
+
+    it "saves password in ENV" do
+      allow(ENV).to receive(:[]).with("JIGIT_JIRA_CONFIG_PASSWORD").and_return(nil)
+      Jigit::JiraConfig.store_jira_config(@config)
+    end
+
+    it "saves host in ENV" do
+      allow(ENV).to receive(:[]).with("JIGIT_JIRA_CONFIG_HOST").and_return(nil)
+      Jigit::JiraConfig.store_jira_config(@config)
+    end
+  end
+
+  context "when get current jira config" do
+    context "when there is config stored" do
+      before do
+        allow(ENV).to receive(:[]).with("JIGIT_JIRA_CONFIG_USER").and_return("superman")
+        allow(ENV).to receive(:[]).with("JIGIT_JIRA_CONFIG_PASSWORD").and_return("1234567890")
+        allow(ENV).to receive(:[]).with("JIGIT_JIRA_CONFIG_HOST").and_return("my.jira.com")
+      end
+
+      it "returns valid config" do
+        config = Jigit::JiraConfig.current_jira_config
+        expect(config.user).to eq("superman")
+        expect(config.password).to eq("1234567890")
+        expect(config.host).to eq("my.jira.com")
+      end
+    end
+
+    context "when there is no config stored" do
+      before do
+        expect(ENV).to receive(:[]).with("JIGIT_JIRA_CONFIG_USER").and_return(nil)
+        expect(ENV).to receive(:[]).with("JIGIT_JIRA_CONFIG_PASSWORD").and_return(nil)
+        expect(ENV).to receive(:[]).with("JIGIT_JIRA_CONFIG_HOST").and_return(nil)
+      end
+
+      it "returns nil" do
+        expect(Jigit::JiraConfig.current_jira_config).to be_nil
+      end
+    end
+  end
 end
