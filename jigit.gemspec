@@ -23,6 +23,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "rspec", "~> 3.4"
   spec.add_runtime_dependency "claide", "~> 1.0"
   spec.add_runtime_dependency "cork", "~> 0.1"
+  spec.add_runtime_dependency "jira-ruby", "~> 0.1"
 
   spec.add_development_dependency "rubocop", "~> 0.42"
   spec.add_development_dependency "bundler", "~> 1.3"
