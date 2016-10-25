@@ -41,7 +41,20 @@ module Jigit
     private
 
     def start_working_on_issue(issue)
-       puts @jira_helper.fetch_jira_issue_status(issue)
+      jira_issue = @jira_helper.fetch_jira_issue(issue)
+      unless jira_issue
+        ui.say("#{issue} doesn't exist on JIRA, skipping...")
+        return
+      end
+      if jira_issue.status.in_progress?
+        ui.say("#{issue} is already in progress...")
+        return
+      end
+
+      proceed_option = ui.ask_with_answers("Are you going to work on #{issue}?\n", ["yes", "no"])
+      return if proceed_option == "no"
+
+      jira_issue.update_status("1002")
     end
 
   end

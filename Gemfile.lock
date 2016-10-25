@@ -14,11 +14,11 @@ GEM
       colored (~> 1.2)
     diff-lcs (1.2.5)
     i18n (0.7.0)
-    jira-ruby (0.1.18)
+    jira-ruby (1.1.1)
       activesupport
-      oauth (~> 0.4.7)
+      oauth (~> 0.5, >= 0.5.0)
     minitest (5.9.1)
-    oauth (0.4.7)
+    oauth (0.5.1)
     parser (2.3.1.4)
       ast (~> 2.2)
     powerpack (0.1.1)
@@ -55,7 +55,7 @@ PLATFORMS
 DEPENDENCIES
   claide (~> 1.0)
   cork (~> 0.1)
-  jira-ruby (~> 0.1)
+  jira-ruby (~> 1.0)
   rake (~> 10.0)
   rspec (~> 3.4)
   rubocop (~> 0.42)

@@ -1,4 +1,4 @@
-require "jigit/jira_config"
+require "jigit/jira/jira_config"
 
 describe Jigit::JiraConfig do
   context "when initialize" do
