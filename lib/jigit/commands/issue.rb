@@ -54,7 +54,20 @@ module Jigit
       proceed_option = ui.ask_with_answers("Are you going to work on #{issue}?\n", ["yes", "no"])
       return if proceed_option == "no"
 
-      jira_issue.update_status("1002")
+      jira_issue_transitions = @jira_helper.fetch_issue_transitions(jira_issue)
+      unless jira_issue_transitions
+        ui.error("#{issue} doesn't have any transitions...")
+        return
+      end
+      to_in_progress_transition = jira_issue_transitions.select do |transition|
+        transition.to_status.in_progress?
+      end.first
+      unless to_in_progress_transition
+        ui.error("#{issue} doesn't have transition to 'In Progress' status..")
+        return
+      end
+      jira_issue.make_transition(to_in_progress_transition.id)
+      ui.inform("#{issue} now is 'In Progress', work hard ;)")
     end
 
   end

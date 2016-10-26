@@ -1,6 +1,7 @@
 require 'jira-ruby'
 require 'jigit/jira/resources/jira_issue'
-require 'jigit/jira/resources/jira_issue'
+require 'jigit/jira/resources/jira_status'
+require 'jigit/jira/resources/jira_transition'
 
 module Jigit
   class JiraHelper
@@ -27,6 +28,15 @@ module Jigit
       return nil unless statuses
       statuses.map do |status|
         Jigit::JiraStatus.new(status)
+      end
+    end
+
+    def fetch_issue_transitions(issue)
+      raise "Can not fetch a JIRA issue's transitions without issue name" unless issue.jira_ruby_issue
+      transitions = jira_client.Transition.all(:issue => issue.jira_ruby_issue)
+      return nil unless transitions
+      transitions.map do |transition|
+        Jigit::JiraTransition.new(transition)
       end
     end
 
