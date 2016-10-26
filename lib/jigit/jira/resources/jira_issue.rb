@@ -1,4 +1,5 @@
 require 'jigit/jira/resources/jira_status'
+require 'jigit/jira/resources/jira_transition'
 
 module Jigit
   class JiraIssue
@@ -10,16 +11,17 @@ module Jigit
     end
 
     def status
-      Jigit::JiraStatus.new(self.jira_ruby_issue.status)
+      Jigit::JiraStatus.new(@jira_ruby_issue.status)
     end
 
     def assignee_name
       @jira_ruby_issue.assignee.name
     end
 
-    def update_status(status_id)
-      raise "status_id must not be nil" unless status_id
-      @jira_ruby_issue.save({"fields"=>{"status"=>{"id"=>status_id}}})
+    def make_transition(transition_id)
+      raise "status_id must not be nil" unless transition_id
+      transition = @jira_ruby_issue.transitions.build
+      transition.save!("transition" => {"id" => transition_id})
     end
   end
 end
