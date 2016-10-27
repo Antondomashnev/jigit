@@ -20,12 +20,13 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = ">= 2.0.0"
 
-  spec.add_runtime_dependency "rspec", "~> 3.4"
   spec.add_runtime_dependency "claide", "~> 1.0"
   spec.add_runtime_dependency "cork", "~> 0.1"
-  spec.add_runtime_dependency "jira-ruby", "~> 0.1"
+  spec.add_runtime_dependency "jira-ruby", "~> 1.0"
 
+  spec.add_development_dependency 'webmock',  '~> 1.18', '>= 1.18.0'
   spec.add_development_dependency "rubocop", "~> 0.42"
   spec.add_development_dependency "bundler", "~> 1.3"
-  spec.add_development_dependency "rake"
+  spec.add_development_dependency 'rspec', '~> 3.0', '>= 3.0.0'
+  spec.add_development_dependency 'rake', '~> 10.3', '>= 10.3.2'
 end
