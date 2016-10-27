@@ -1,4 +1,4 @@
 module Jigit
   VERSION = "0.1.0".freeze
-  DESCRIPTION = "TODO".freeze
+  DESCRIPTION = "Bla bla bla".freeze
 end

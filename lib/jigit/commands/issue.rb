@@ -1,5 +1,5 @@
 require "jigit/commands/runner"
-require "jigit/jira/jira_helper"
+require "jigit/jira/jira_api_client"
 require "jigit/jira/jira_config"
 
 module Jigit
@@ -12,17 +12,17 @@ module Jigit
       @action = argv.shift_argument
       @issue_name = argv.option('name')
       @jira_config = Jigit::JiraConfig.new("antondomashnev+jira1@gmail.com", "Anton2104", "antondomashnevjira1.atlassian.net") # Jigit::JiraConfig.current_jira_config
-      @jira_helper = Jigit::JiraHelper.new(@jira_config) if @jira_config
+      @jira_api_client = Jigit::JiraAPIClient.new(@jira_config) if @jira_config
       super
     end
 
     def validate!
       super
       if @action && !%w(stop start).include?(@action)
-        help! "`#{@action}' is not a valid action."
+        help!("`#{@action}' is not a valid action.")
       end
-      help! "Please setup jira config using `jigit init` before using issue command." unless @jira_config
-      help! "Please specify JIRA issue. It must not be nil." unless @issue_name
+      help!("Please setup jira config using `jigit init` before using issue command.") unless @jira_config
+      help!("Please specify JIRA issue. It must not be nil.") unless @issue_name
     end
 
     def self.options
@@ -41,11 +41,12 @@ module Jigit
     private
 
     def start_working_on_issue(issue)
-      jira_issue = @jira_helper.fetch_jira_issue(issue)
+      jira_issue = @jira_api_client.fetch_jira_issue(issue)
       unless jira_issue
         ui.say("#{issue} doesn't exist on JIRA, skipping...")
         return
       end
+
       if jira_issue.status.in_progress?
         ui.say("#{issue} is already in progress...")
         return
@@ -54,7 +55,7 @@ module Jigit
       proceed_option = ui.ask_with_answers("Are you going to work on #{issue}?\n", ["yes", "no"])
       return if proceed_option == "no"
 
-      jira_issue_transitions = @jira_helper.fetch_issue_transitions(jira_issue)
+      jira_issue_transitions = @jira_api_client.fetch_issue_transitions(jira_issue)
       unless jira_issue_transitions
         ui.error("#{issue} doesn't have any transitions...")
         return
@@ -63,11 +64,11 @@ module Jigit
         transition.to_status.in_progress?
       end.first
       unless to_in_progress_transition
-        ui.error("#{issue} doesn't have transition to 'In Progress' status..")
+        ui.error("#{issue} doesn't have transition to 'In Progress' status...")
         return
       end
       jira_issue.make_transition(to_in_progress_transition.id)
-      ui.inform("#{issue} now is 'In Progress', work hard ;)")
+      ui.inform("#{issue} now is 'In Progress' 💪")
     end
 
   end
