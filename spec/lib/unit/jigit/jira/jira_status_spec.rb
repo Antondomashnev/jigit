@@ -71,7 +71,7 @@ describe Jigit::JiraStatus do
 
   describe(".new") do
     context("when without base status") do
-      it("raises and error") do
+      it("raises an error") do
         expect { Jigit::JiraStatus.new(nil) }.to raise_error("Can not initialize JiraStatus without jira-ruby status")
       end
     end
@@ -86,8 +86,8 @@ describe Jigit::JiraStatus do
       }
 
       it("assigns the base issue") do
-        issue = Jigit::JiraStatus.new(base_status)
-        expect(issue.jira_ruby_status).to be(base_status)
+        status = Jigit::JiraStatus.new(base_status)
+        expect(status.jira_ruby_status).to be(base_status)
       end
     end
   end

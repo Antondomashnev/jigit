@@ -3,7 +3,7 @@ module Jigit
     attr_reader :jira_ruby_transition
 
     def initialize(jira_ruby_transition)
-      raise "Can not initialize transition without jira_ruby_transition" unless jira_ruby_transition
+      raise "Can not initialize transition without jira-ruby transition" unless jira_ruby_transition
       @jira_ruby_transition = jira_ruby_transition
     end
 
