@@ -1,6 +1,6 @@
 # This task is copied from the https://github.com/sumoheavy/jira-ruby/blob/master/lib/tasks/generate.rake
 
-require 'securerandom'
+require "securerandom"
 
 namespace :jira do
   desc "Generate a consumer key for your application"

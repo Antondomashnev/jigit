@@ -10,7 +10,7 @@ module Jigit
 
     def initialize(argv)
       @action = argv.shift_argument
-      @issue_name = argv.option('name')
+      @issue_name = argv.option("name")
       @jira_config = Jigit::JiraConfig.new("antondomashnev+jira1@gmail.com", "Anton2104", "antondomashnevjira1.atlassian.net") # Jigit::JiraConfig.current_jira_config
       @jira_api_client = Jigit::JiraAPIClient.new(@jira_config) if @jira_config
       super
@@ -27,9 +27,9 @@ module Jigit
 
     def self.options
       [
-        ['stop', 'Use this argument if you want to stop working on the feature. For example after checkouting to another branch'],
-        ['start', 'Use this argument if you want to start working on the feature. For example after checkouting to that branch'],
-        ['--name=issue_name_on_jira', 'Use this argument to provide a JIRA issue name. For example if the project short name is CNI, the issue name could be CNI-101']
+        ["stop", "Use this argument if you want to stop working on the feature. For example after checkouting to another branch"],
+        ["start", "Use this argument if you want to start working on the feature. For example after checkouting to that branch"],
+        ["--name=issue_name_on_jira", "Use this argument to provide a JIRA issue name. For example if the project short name is CNI, the issue name could be CNI-101"]
       ].concat(super)
     end
 
@@ -70,6 +70,5 @@ module Jigit
       jira_issue.make_transition(to_in_progress_transition.id)
       ui.inform("#{issue} now is 'In Progress' 💪")
     end
-
   end
 end
