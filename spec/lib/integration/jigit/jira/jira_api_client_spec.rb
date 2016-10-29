@@ -37,7 +37,16 @@ describe Jigit::JiraAPIClient do
     end
 
     context("when there is issue") do
+      before do
+        stub_request(:get, site_url + "/jira/rest/api/2/search?jql=key%20=%20ADT-1").
+                    to_return(:status => 200, :body => get_mock_response('issue.json'))
+      end
 
+      it("returns wrapped jira issue") do
+        jira_api_client = Jigit::JiraAPIClient.new(config, jira_client)
+        fetched_issue = jira_api_client.fetch_jira_issue(issue_name)
+        expect(fetched_issue).to be_truthy
+      end
     end
   end
 
