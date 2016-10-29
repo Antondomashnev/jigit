@@ -5,10 +5,11 @@ require "jigit/jira/resources/jira_transition"
 
 module Jigit
   class JiraAPIClient
-    def initialize(config, jira_client = nil)
+    def initialize(config, jira_client = nil, informator = nil)
       raise "Config must not be nil to use JiraHelper" unless config
       @config = config
       @jira_client = jira_client
+      @informator = informator
     end
 
     def jira_client
@@ -32,7 +33,7 @@ module Jigit
           Jigit::JiraTransition.new(transition)
         end
       rescue JIRA::HTTPError => exception
-        puts ">>>>>>>>> Exception response: #{exception.response.body}"
+        @informator.error("Can not fetch Jira issue transitions: #{exception.response.body}") if @informator
         return nil
       end
     end
@@ -44,7 +45,7 @@ module Jigit
         return nil unless issue
         Jigit::JiraIssue.new(issue)
       rescue JIRA::HTTPError => exception
-        puts ">>>>>>>>> Exception response: #{exception.response.body}"
+        @informator.error("Can not fetch a JIRA issue: #{exception.response.body}") if @informator
         return nil
       end
     end
