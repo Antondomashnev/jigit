@@ -1,7 +1,7 @@
-require 'jira-ruby'
-require 'jigit/jira/resources/jira_issue'
-require 'jigit/jira/resources/jira_status'
-require 'jigit/jira/resources/jira_transition'
+require "jira-ruby"
+require "jigit/jira/resources/jira_issue"
+require "jigit/jira/resources/jira_status"
+require "jigit/jira/resources/jira_transition"
 
 module Jigit
   class JiraAPIClient
@@ -14,11 +14,11 @@ module Jigit
     def jira_client
       return @jira_client if @jira_client
       options = {
-            :username => @config.user,
-            :password => @config.password,
-            :site     => "https://#{@config.host}",
-            :context_path => '',
-            :auth_type => :basic
+            username: @config.user,
+            password: @config.password,
+            site: "https://#{@config.host}",
+            context_path: "",
+            auth_type: :basic
           }
       @jira_client ||= JIRA::Client.new(options)
     end
@@ -26,7 +26,7 @@ module Jigit
     def fetch_issue_transitions(issue)
       raise "Can not fetch a JIRA issue's transitions without issue name" unless issue.jira_ruby_issue
       begin
-        transitions = jira_client.Transition.all(:issue => issue.jira_ruby_issue)
+        transitions = jira_client.Transition.all(issue: issue.jira_ruby_issue)
         return nil unless transitions
         transitions.map do |transition|
           Jigit::JiraTransition.new(transition)

@@ -4,28 +4,28 @@ require "webmock/rspec"
 describe Jigit::JiraAPIClient do
   let(:config) { object_double(Jigit::JiraConfig) }
   let(:site_url) { "http://foo:bar@localhost:2990" }
-  let(:jira_client) {
-    basic_client = JIRA::Client.new({ :username => 'foo', :password => 'bar', :auth_type => :basic, :use_ssl => false })
+  let(:jira_client) do
+    basic_client = JIRA::Client.new({ username: "foo", password: "bar", auth_type: :basic, use_ssl: false })
     basic_client
-  }
+  end
 
   describe("fetch_issue_transitions") do
-    let(:jira_issue) {
-      base_issue = JIRA::Resource::Issue.new(jira_client, :attrs => {
-        'id' => '10002',
-        'self' => "#{site_url}/jira/rest/api/2/issue/10002",
-        'fields' => {
-          'comment' => {'comments' => []}
+    let(:jira_issue) do
+      base_issue = JIRA::Resource::Issue.new(jira_client, attrs: {
+        "id" => "10002",
+        "self" => "#{site_url}/jira/rest/api/2/issue/10002",
+        "fields" => {
+          "comment" => { "comments" => [] }
         }
       })
       issue = Jigit::JiraIssue.new(base_issue)
       issue
-    }
+    end
 
     context("when there is HTTP error") do
       before do
         stub_request(:get, site_url + "/jira/rest/api/2/issue/10002/transitions?expand=transitions.fields").
-                    to_return(:status => 405, :body => "<html><body>Some HTML</body></html>")
+          to_return(status: 405, body: "<html><body>Some HTML</body></html>")
       end
 
       it("returns nil") do
@@ -37,7 +37,7 @@ describe Jigit::JiraAPIClient do
     context("when there is no transitions") do
       before do
         stub_request(:get, site_url + "/jira/rest/api/2/issue/10002/transitions?expand=transitions.fields").
-                    to_return(:status => 301, :body => "{\"errorMessages\":[\"Transitions Do Not Exist\"],\"errors\":{}}")
+          to_return(status: 301, body: "{\"errorMessages\":[\"Transitions Do Not Exist\"],\"errors\":{}}")
       end
 
       it("returns nil") do
@@ -49,7 +49,7 @@ describe Jigit::JiraAPIClient do
     context("when there are transitions") do
       before do
         stub_request(:get, site_url + "/jira/rest/api/2/issue/10002/transitions?expand=transitions.fields").
-                    to_return(:status => 200, :body => get_mock_response('issue_1002_transitions.json'))
+          to_return(status: 200, body: get_mock_response("issue_1002_transitions.json"))
       end
 
       it("returns correct amount of transitions") do
@@ -61,7 +61,7 @@ describe Jigit::JiraAPIClient do
       it("returns wrapped jira transitions") do
         jira_api_client = Jigit::JiraAPIClient.new(config, jira_client)
         fetched_transitions = jira_api_client.fetch_issue_transitions(jira_issue)
-        expect(fetched_transitions).to all( be_instance_of(Jigit::JiraTransition) )
+        expect(fetched_transitions).to all(be_instance_of(Jigit::JiraTransition))
       end
     end
   end
@@ -72,7 +72,7 @@ describe Jigit::JiraAPIClient do
     context("when there is HTTP error") do
       before do
         stub_request(:get, site_url + "/jira/rest/api/2/search?jql=key%20=%20ADT-1").
-                    to_return(:status => 405, :body => "<html><body>Some HTML</body></html>")
+          to_return(status: 405, body: "<html><body>Some HTML</body></html>")
       end
 
       it("returns nil") do
@@ -84,7 +84,7 @@ describe Jigit::JiraAPIClient do
     context("when there is no issue") do
       before do
         stub_request(:get, site_url + "/jira/rest/api/2/search?jql=key%20=%20ADT-1").
-                    to_return(:status => 301, :body => "{\"errorMessages\":[\"Issue Does Not Exist\"],\"errors\":{}}")
+          to_return(status: 301, body: "{\"errorMessages\":[\"Issue Does Not Exist\"],\"errors\":{}}")
       end
 
       it("returns nil") do
@@ -96,7 +96,7 @@ describe Jigit::JiraAPIClient do
     context("when there is issue") do
       before do
         stub_request(:get, site_url + "/jira/rest/api/2/search?jql=key%20=%20ADT-1").
-                    to_return(:status => 200, :body => get_mock_response('issue.json'))
+          to_return(status: 200, body: get_mock_response("issue.json"))
       end
 
       it("returns wrapped jira issue") do
@@ -106,7 +106,4 @@ describe Jigit::JiraAPIClient do
       end
     end
   end
-
-
-
 end

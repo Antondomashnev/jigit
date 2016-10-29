@@ -1,5 +1,5 @@
-require 'jigit/jira/resources/jira_status'
-require 'jigit/jira/resources/jira_transition'
+require "jigit/jira/resources/jira_status"
+require "jigit/jira/resources/jira_transition"
 
 module Jigit
   class JiraIssue
@@ -21,7 +21,7 @@ module Jigit
     def make_transition(transition_id)
       raise "status_id must not be nil" unless transition_id
       transition = @jira_ruby_issue.transitions.build
-      transition.save!("transition" => {"id" => transition_id})
+      transition.save!("transition" => { "id" => transition_id })
     end
   end
 end
