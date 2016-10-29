@@ -23,19 +23,6 @@ module Jigit
       @jira_client ||= JIRA::Client.new(options)
     end
 
-    def fetch_all_statuses
-      begin
-        statuses = jira_client.Status.all
-        return nil unless statuses
-        statuses.map do |status|
-          Jigit::JiraStatus.new(status)
-        end
-      rescue JIRA::HTTPError => exception
-        puts ">>>>>>>>> Exception response: #{exception.response.body}"
-        return nil
-      end
-    end
-
     def fetch_issue_transitions(issue)
       raise "Can not fetch a JIRA issue's transitions without issue name" unless issue.jira_ruby_issue
       begin
