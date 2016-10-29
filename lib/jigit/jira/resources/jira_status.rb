@@ -3,7 +3,7 @@ module Jigit
     attr_reader :jira_ruby_status
 
     def initialize(jira_ruby_status)
-      raise "Can not initialize JiraStatus without jira_ruby_status" unless jira_ruby_status
+      raise "Can not initialize JiraStatus without jira-ruby status" unless jira_ruby_status
       @jira_ruby_status = jira_ruby_status
     end
 
