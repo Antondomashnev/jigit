@@ -49,5 +49,16 @@ module Jigit
         return nil
       end
     end
+
+    def fetch_jira_statuses
+      statuses = jira_client.Status.all
+      return nil unless statuses
+      statuses.map do |status|
+        Jigit::JiraStatus.new(status)
+      end
+    rescue JIRA::HTTPError => exception
+      @informator.error("Can not fetch a JIRA statuses: #{exception.response.body}") if @informator
+      return nil
+    end
   end
 end
