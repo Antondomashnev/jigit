@@ -9,6 +9,51 @@ describe Jigit::JiraAPIClient do
     basic_client
   end
 
+  describe("fetch_jira_statuses") do
+    context("when there is HTTP error") do
+      before do
+        stub_request(:get, site_url + "/jira/rest/api/2/status").
+          to_return(status: 405, body: "<html><body>Some HTML</body></html>")
+      end
+
+      it("returns nil") do
+        jira_api_client = Jigit::JiraAPIClient.new(config, jira_client)
+        expect(jira_api_client.fetch_jira_statuses).to be_nil
+      end
+    end
+
+    context("when there is no statuses") do
+      before do
+        stub_request(:get, site_url + "/jira/rest/api/2/status").
+          to_return(status: 301, body: "{\"errorMessages\":[\"Statuses Do Not Exist\"],\"errors\":{}}")
+      end
+
+      it("returns nil") do
+        jira_api_client = Jigit::JiraAPIClient.new(config, jira_client)
+        expect(jira_api_client.fetch_jira_statuses).to be_nil
+      end
+    end
+
+    context("when there are statuses") do
+      before do
+        stub_request(:get, site_url + "/jira/rest/api/2/status").
+          to_return(status: 200, body: get_mock_response("statuses.json"))
+      end
+
+      it("returns correct amount of statuses") do
+        jira_api_client = Jigit::JiraAPIClient.new(config, jira_client)
+        fetched_statuses = jira_api_client.fetch_jira_statuses
+        expect(fetched_statuses.count).to be == 5
+      end
+
+      it("returns wrapped jira statuses") do
+        jira_api_client = Jigit::JiraAPIClient.new(config, jira_client)
+        fetched_statuses = jira_api_client.fetch_jira_statuses
+        expect(fetched_statuses).to all(be_instance_of(Jigit::JiraStatus))
+      end
+    end
+  end
+
   describe("fetch_issue_transitions") do
     let(:jira_issue) do
       base_issue = JIRA::Resource::Issue.new(jira_client, attrs: {

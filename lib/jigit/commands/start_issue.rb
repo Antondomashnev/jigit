@@ -2,7 +2,7 @@ require "jigit/commands/issue"
 
 module Jigit
   class StartIssueRunner < IssueRunner
-    self.abstract_command = true
+    self.abstract_command = false
     self.summary = "Command to put the given JIRA issue to 'In Progress' state"
     self.command = "start"
 

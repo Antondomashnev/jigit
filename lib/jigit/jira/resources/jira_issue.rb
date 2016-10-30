@@ -18,6 +18,9 @@ module Jigit
       @jira_ruby_issue.assignee.name
     end
 
+    def type
+    end
+
     def make_transition(transition_id)
       raise "status_id must not be nil" unless transition_id
       transition = @jira_ruby_issue.transitions.build
