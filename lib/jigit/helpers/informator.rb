@@ -43,6 +43,21 @@ module Jigit
       ui.puts
     end
 
+    def ask(question)
+      answer = ""
+      loop do
+        ui.puts "\n#{question}?"
+
+        show_prompt
+        answer = STDIN.gets.chomp
+
+        break if answer.empty?
+
+        ui.print "\nYou need to provide an answer."
+      end
+      answer
+    end
+
     def ask_with_answers(question, possible_answers)
       ui.print("\n#{question}? [")
       print_possible_answers(possible_answers)

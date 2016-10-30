@@ -24,6 +24,14 @@ module Jigit
       @jira_client ||= JIRA::Client.new(options)
     end
 
+    def validate_api?
+      serverinfo = jira_client.ServerInfo.all
+      return !serverinfo.nil?
+    rescue JIRA::HTTPError => exception
+      @informator.error("Can not fetch Jira server info: #{exception.response.body}") if @informator
+      return false
+    end
+
     def fetch_issue_transitions(issue)
       raise "Can not fetch a JIRA issue's transitions without issue name" unless issue.jira_ruby_issue
       begin
