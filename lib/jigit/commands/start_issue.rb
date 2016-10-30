@@ -3,7 +3,7 @@ require "jigit/commands/issue"
 module Jigit
   class StartIssueRunner < IssueRunner
     self.abstract_command = true
-    self.summary = "ommand to put the given JIRA issue to 'In Progress' state"
+    self.summary = "Command to put the given JIRA issue to 'In Progress' state"
     self.command = "start"
 
     def initialize(argv)
@@ -24,10 +24,9 @@ module Jigit
 
     def run
       self
-      proceed_option = ui.ask_with_answers("Are you going to work on #{issue}?\n", ["yes", "no"])
-      return if proceed_option == "no"
+      return unless want_to_start_working_on_issue?
 
-      jira_issue = @jira_api_client.fetch_jira_issue(issue)
+      jira_issue = @jira_api_client.fetch_jira_issue(@issue_name)
       return unless could_start_working_on_issue?(jira_issue)
 
       transition_finder = Jigit::JiraTransitionFinder(@jira_api_client.fetch_issue_transitions(jira_issue))
@@ -42,6 +41,11 @@ module Jigit
     end
 
     private
+
+    def want_to_start_working_on_issue?
+      proceed_option = ui.ask_with_answers("Are you going to work on #{issue}?\n", ["yes", "no"])
+      proceed_option == "no"
+    end
 
     def could_start_working_on_issue?(jira_issue)
       unless jira_issue
