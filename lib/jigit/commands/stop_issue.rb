@@ -7,8 +7,8 @@ module Jigit
     self.command = "stop"
 
     def initialize(argv)
-      @issue_name = argv.option("name")
       super
+      @issue_name = argv.option("name")
     end
 
     def validate!
