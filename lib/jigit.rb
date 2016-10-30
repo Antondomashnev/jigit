@@ -3,6 +3,7 @@ require "jigit/commands/runner"
 require "jigit/commands/issue"
 require "jigit/commands/start_issue"
 require "jigit/commands/stop_issue"
+require "jigit/commands/init"
 
 require "claide"
 require "cork"

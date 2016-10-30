@@ -4,7 +4,7 @@ module Jigit
   # This class is heavily based on the Interviewer class from the Danger gem
   # The original link is https://github.com/danger/danger/blob/master/lib/danger/commands/init_helpers/interviewer.rb
   class Informator
-    attr_accessor :no_waiting, :ui
+    attr_accessor :no_waiting, :ui, :no_delay
 
     def initialize(cork_board)
       @ui = cork_board
@@ -20,6 +20,20 @@ module Jigit
 
     def inform(message)
       ui.puts(message.green)
+    end
+
+    def link(url)
+      say " -> " + url.underline + "\n"
+    end
+
+    def pause(time)
+      sleep(time) unless @no_waiting
+    end
+
+    def header(title)
+      say title.yellow
+      say ""
+      pause 0.6
     end
 
     def important(message)
@@ -39,7 +53,7 @@ module Jigit
 
     def wait_for_return
       STDOUT.flush
-      STDIN.gets unless @no_waiting
+      STDIN.gets unless @no_delay
       ui.puts
     end
 
@@ -51,7 +65,7 @@ module Jigit
         show_prompt
         answer = STDIN.gets.chomp
 
-        break if answer.empty?
+        break unless answer.empty?
 
         ui.print "\nYou need to provide an answer."
       end
