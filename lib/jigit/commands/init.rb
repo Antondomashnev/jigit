@@ -105,14 +105,12 @@ module Jigit
       ui.say "Fetching all possible statuses from JIRA...\n"
       jira_api_client = Jigit::JiraAPIClient.new(Jigit::JiraConfig.current_jira_config, nil, ui)
       all_statuses = jira_api_client.fetch_jira_statuses
-      if all_statuses.nil? || all_statuses.count == 0
+      if all_statuses.nil? || all_statuses.count.zero?
         ui.error "Yikes 😕\n"
         ui.say "Jigit can not find any statuses for JIRA issue in your company setup.\n"
         return nil
       else
-        all_statuses.map do |status|
-          status.name
-        end
+        all_statuses.map(&:name)
       end
     end
 
@@ -138,7 +136,7 @@ module Jigit
       selected_status_name = nil
       loop do
         selected_status_names << selected_status_name unless selected_status_name.nil?
-        break if not_asked_status_names.count == 0
+        break if not_asked_status_names.count.zero?
         selected_status_name = ui.ask_with_answers("Which one you want to select", not_asked_status_names + "nothing")
         break if selected_status_name == "nothing"
         not_asked_status_names.delete(selected_status_name)
@@ -147,7 +145,7 @@ module Jigit
     end
 
     def setup_jigitfile
-      jigitfile_generator = Jigit::JigitfileGenerator.new()
+      jigitfile_generator = Jigit::JigitfileGenerator.new
 
       ui.header "Step 1: Setting up a Jigit configuration file"
       ui.say "In order to Jigit to be able to help you it needs to know something about your usual workflow.\n"
