@@ -10,8 +10,8 @@ module Jigit
        "  newBranchName=`git symbolic-ref --short HEAD`",
        "  oldBranchName=`git rev-parse --abbrev-ref @{-1}`",
        "  if [ $newBranchName != $oldBranchName ]; then",
-       "    echo \"New Branch name: \"$newBranchName\"",
-       "    echo \"Old Branch name: \"$oldBranchName\"",
+       "    jigit issue start_issue --name=$newBranchName",
+       "    jigit issue stop_issue --name=$oldBranchName",
        "  fi",
        "fi"]
     end

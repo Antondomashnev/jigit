@@ -196,7 +196,7 @@ module Jigit
       ui.pause 0.6
       ui.say "and to update status for the old branch on JIRA"
 
-      git_hook_installer = Jigit::GitHookInstaller.new()
+      git_hook_installer = Jigit::GitHookInstaller.new
       post_checkout_hook = Jigit::PostCheckoutHook
       git_hook_installer.install(post_checkout_hook)
 
