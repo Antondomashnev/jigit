@@ -1,4 +1,5 @@
 require "jigit/git_hooks/git_hook_installer"
+require "jigit/git_hooks/git_hook"
 require "fileutils"
 
 describe Jigit::GitHookInstaller do
@@ -16,10 +17,13 @@ describe Jigit::GitHookInstaller do
           f.puts("First line")
         end
 
-        @subject = Jigit::GitHookInstaller.new("my_hook",
-                                               "spec/fixtures/git_hook_installer/.git/hooks",
+        git_hook = double(Jigit::GitHook)
+        allow(git_hook).to receive(:hook_lines).and_return(["Second line", "Third line"])
+        allow(git_hook).to receive(:name).and_return("my_hook")
+
+        @subject = Jigit::GitHookInstaller.new("spec/fixtures/git_hook_installer/.git/hooks",
                                                "spec/fixtures/git_hook_installer/.git")
-        @subject.install(["Second line", "Third line"])
+        @subject.install(git_hook)
       end
 
       it("appends the given lines into git hook file") do
@@ -34,10 +38,13 @@ describe Jigit::GitHookInstaller do
       before(:each) do
         FileUtils.mkdir_p("spec/fixtures/git_hook_installer/.git")
 
-        @subject = Jigit::GitHookInstaller.new("my_hook",
-                                               "spec/fixtures/git_hook_installer/.git/hooks",
+        git_hook = double(Jigit::GitHook)
+        allow(git_hook).to receive(:hook_lines).and_return(["First line", "Second line"])
+        allow(git_hook).to receive(:name).and_return("my_hook")
+
+        @subject = Jigit::GitHookInstaller.new("spec/fixtures/git_hook_installer/.git/hooks",
                                                "spec/fixtures/git_hook_installer/.git")
-        @subject.install(["First line", "Second line"])
+        @subject.install(git_hook)
       end
 
       it("creates the hook file") do
