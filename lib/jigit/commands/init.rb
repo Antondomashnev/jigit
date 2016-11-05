@@ -3,6 +3,8 @@ require "jigit/jira/jira_config"
 require "jigit/jira/jira_api_client"
 require "jigit/jira/resources/jira_status"
 require "jigit/core/jigitfile_generator"
+require "jigit/git_hooks/git_hook_installer"
+require "jigit/git_hooks/post_checkout_hook"
 
 module Jigit
   # This class is heavily based on the Init command from the Danger gem
@@ -34,6 +36,7 @@ module Jigit
 
       setup_access_to_jira
       setup_jigitfile
+      setup_post_checkout_hook
 
       info
       thanks
@@ -61,10 +64,11 @@ module Jigit
       ui.ask("What's is the host for your JIRA server?").strip unless polite
 
       ui.say "\nThanks, and the last one is a bit tricky. Jigit needs the " + "host".green + " of your JIRA server.\n"
-      ui.pause 1
+      ui.pause 0.6
       ui.say "The easiest way to get it is to go to your JIRA website and check the browser address field.\n"
+      ui.pause 0.6
       ui.say "Usually it looks like " + "your_company_name.atlassian.net".green + ".\n"
-      ui.pause 1
+      ui.pause 0.6
       ui.ask("What's is the host for your JIRA server").strip
     end
 
@@ -85,7 +89,9 @@ module Jigit
 
     def setup_access_to_jira
       ui.header "\nStep 1: Setting up an access to JIRA"
+      ui.pause 0.6
       ui.say "In order to Jigit to be able to help you, it needs access to your JIRA account.\n"
+      ui.pause 0.6
       ui.say "But don't worry it'll store it in a safe place.\n"
       ui.pause 1
 
@@ -116,7 +122,9 @@ module Jigit
 
     def handle_nicely_setup_jigitfile_failure
       ui.say "Unfortunately, Jigit can not proceed without that information.\n"
+      ui.pause 0.6
       ui.say "Try to check the JIRA setup and your internet connection status.\n"
+      ui.pause 0.6
       ui.say "If everything looks fine, try to init Jigit once egain: `bundle exec jigit init`"
     end
 
@@ -129,7 +137,9 @@ module Jigit
       not_asked_status_names = status_names
       selected_status_names = []
       ui.say "Now Jigit needs to know, what status could you set when stop working on the issue.\n"
+      ui.pause 0.6
       ui.say "We know you can have multiple, don't worry  and"
+      ui.pause 0.6
       ui.say "when you're done select 'nothing' option.\n"
       ui.pause 1
 
@@ -137,8 +147,9 @@ module Jigit
       loop do
         selected_status_names << selected_status_name unless selected_status_name.nil?
         break if not_asked_status_names.count.zero?
-        selected_status_name = ui.ask_with_answers("Which one you want to select", not_asked_status_names + "nothing")
+        selected_status_name = ui.ask_with_answers("Which one you want to select", not_asked_status_names + ["nothing"])
         break if selected_status_name == "nothing"
+        ui.say selected_status_name
         not_asked_status_names.delete(selected_status_name)
       end
       return selected_status_names
@@ -147,7 +158,7 @@ module Jigit
     def setup_jigitfile
       jigitfile_generator = Jigit::JigitfileGenerator.new
 
-      ui.header "Step 1: Setting up a Jigit configuration file"
+      ui.header "Step 2: Setting up a Jigit configuration file"
       ui.say "In order to Jigit to be able to help you it needs to know something about your usual workflow.\n"
       ui.pause 1
 
@@ -170,7 +181,29 @@ module Jigit
 
       ui.say "And the jigitfile is ready 🎉.\n"
       ui.say "You can find it at './.jigit/Jigitfile.yml'"
+      ui.pause 0.6
       ui.say "Let's move to next step, press return when ready..."
+      ui.wait_for_return
+    end
+
+    def setup_post_checkout_hook
+      ui.header "Step 3: Setting up a git hooks to automate the process."
+      ui.say "Jigit is going to create a post-checkout git hook."
+      ui.pause 0.6
+      ui.say "It will the 'git checkout' command and if it's a checkout to a branch"
+      ui.pause 0.6
+      ui.say "Jigit will ask it needs to put the new branch's related issue In Progress"
+      ui.pause 0.6
+      ui.say "and to update status for the old branch on JIRA"
+
+      git_hook_installer = Jigit::GitHookInstaller.new()
+      post_checkout_hook = Jigit::PostCheckoutHook
+      git_hook_installer.install(post_checkout_hook)
+
+      ui.say "And the git hook is ready 🎉.\n"
+      ui.say "You can find it at './.git/hooks/post-checkout'"
+      ui.pause 0.6
+      ui.say "That's all to finish initialization press return"
       ui.wait_for_return
     end
 
@@ -178,7 +211,7 @@ module Jigit
       ui.header "Useful info"
       ui.say "- This project is at it's early stage and may be unstable"
       ui.pause 0.6
-      ui.say "- If you find any bug or want to add something, you're very welcome to our repo:"
+      ui.say "- If you find any bug or want to add something, you're very welcome to the repo:"
       ui.link "https://github.com/Antondomashnev/jigit"
       ui.pause 0.6
       ui.say "- If you want to know more, follow " + "@antondomashnev".green + " on Twitter"
