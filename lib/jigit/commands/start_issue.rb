@@ -14,14 +14,14 @@ module Jigit
       return unless could_start_working_on_issue?(jira_issue)
 
       transition_finder = Jigit::JiraTransitionFinder(@jira_api_client.fetch_issue_transitions(jira_issue))
-      to_in_progress_transition = transition_finder.find_transition_to_in_progress
+      to_in_progress_transition = transition_finder.find_transition_to(@jigitfile.in_progress_status)
       unless to_in_progress_transition
-        ui.error("#{issue} doesn't have transition to 'In Progress' status...")
+        ui.error("#{issue} doesn't have transition to '#{@jigitfile.in_progress_status}' status...")
         return
       end
 
       jira_issue.make_transition(to_in_progress_transition.id)
-      ui.inform("#{issue} now is 'In Progress' 💪")
+      ui.inform("#{issue} now is '#{@jigitfile.in_progress_status}' 💪")
     end
 
     private
@@ -38,7 +38,7 @@ module Jigit
       end
 
       if jira_issue.status.name == @jigitfile.in_progress_status
-        ui.say("#{issue} is already in progress...")
+        ui.say("#{issue} is already #{@jigitfile.in_progress_status}...")
         return false
       end
       return true
