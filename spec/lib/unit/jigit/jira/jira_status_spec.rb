@@ -37,38 +37,6 @@ describe Jigit::JiraStatus do
     end
   end
 
-  describe(".in_progress?") do
-    context("when name is In Progress") do
-      let(:base_status) do
-        base_status = JIRA::Resource::Status.new(jira_client, attrs: {
-          "id" => "1",
-          "self" => "http://localhost:2990/jira/rest/api/2/status/1",
-          "name" => "In Progress"
-        })
-        base_status
-      end
-
-      it("returns true") do
-        expect(Jigit::JiraStatus.new(base_status).in_progress?).to be(true)
-      end
-    end
-
-    context("when name is not In Progress") do
-      let(:base_status) do
-        base_status = JIRA::Resource::Status.new(jira_client, attrs: {
-          "id" => "1",
-          "self" => "http://localhost:2990/jira/rest/api/2/status/1",
-          "name" => "Whatever"
-        })
-        base_status
-      end
-
-      it("returns false") do
-        expect(Jigit::JiraStatus.new(base_status).in_progress?).to be(false)
-      end
-    end
-  end
-
   describe(".new") do
     context("when without base status") do
       it("raises an error") do

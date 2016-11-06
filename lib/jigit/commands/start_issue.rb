@@ -6,22 +6,6 @@ module Jigit
     self.summary = "Command to put the given JIRA issue to 'In Progress' state"
     self.command = "start"
 
-    def initialize(argv)
-      super
-      @issue_name = argv.option("name")
-    end
-
-    def validate!
-      super
-      help!("Please specify JIRA issue. It must not be nil.") unless @issue_name
-    end
-
-    def self.options
-      [
-        ["--name=issue_name_on_jira", "Use this argument to provide a JIRA issue name. For example if the project short name is CNI, the issue name could be CNI-101"]
-      ].concat(super)
-    end
-
     def run
       self
       return unless want_to_start_working_on_issue?
@@ -53,7 +37,7 @@ module Jigit
         return false
       end
 
-      if jira_issue.status.in_progress?
+      if jira_issue.status.name == @jigitfile.in_progress_status
         ui.say("#{issue} is already in progress...")
         return false
       end

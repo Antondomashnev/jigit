@@ -6,10 +6,10 @@ module Jigit
       @transitions = transitions
     end
 
-    def find_transition_to_in_progress
+    def find_transition_to(status_name)
       return nil unless @transitions
       @transitions.select do |transition|
-        transition.to_status.in_progress?
+        transition.to_status.name == status_name
       end.first
     end
   end
