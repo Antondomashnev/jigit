@@ -28,7 +28,7 @@ module Jigit
 
     def want_to_start_working_on_issue?
       proceed_option = ui.ask_with_answers("Are you going to work on #{issue}?\n", ["yes", "no"])
-      proceed_option == "no"
+      proceed_option == "yes"
     end
 
     def could_start_working_on_issue?(jira_issue)
