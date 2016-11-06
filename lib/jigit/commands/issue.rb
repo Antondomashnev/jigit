@@ -10,6 +10,13 @@ module Jigit
 
     def initialize(argv)
       super
+      jigitfile = argv.option("jigitfile")
+      unless jigitfile
+        jigitfile = try_to_find_jigitfile_path
+        raise "--jigitfile is a required parameter and could not be nil" if jigitfile.nil?
+      end
+      @jigitfile = Jigit::Jigitfile.new(jigitfile)
+      @issue_name = argv.option("name")
       @jira_config = Jigit::JiraConfig.new("antondomashnev+jira1@gmail.com", "Anton2104", "antondomashnevjira1.atlassian.net") # Jigit::JiraConfig.current_jira_config
       @jira_api_client = Jigit::JiraAPIClient.new(@jira_config, nil, ui) if @jira_config
     end
@@ -17,48 +24,30 @@ module Jigit
     def validate!
       super
       help!("Please setup jira config using `jigit init` before using issue command.") unless @jira_config
+      help!("Please setup jigitfile using `jigit init` before using issue command.") unless @jigitfile
     end
 
     def self.options
-      []
+      [
+        ["--name=issue_name_on_jira", "Use this argument to provide a JIRA issue name. For example if the project short name is CNI, the issue name could be CNI-101"],
+        ["--jigitfile=path_to_jigit_file", "Use this argument to provide a path to Jigitfile, if nil will be used a default path under the './jigit/' folder"]
+      ].concat(super)
     end
 
     def run
       self
-      start_working_on_issue(@issue_name)
     end
 
     private
 
-    def start_working_on_issue(issue)
-      jira_issue = @jira_api_client.fetch_jira_issue(issue)
-      unless jira_issue
-        ui.say("#{issue} doesn't exist on JIRA, skipping...")
-        return
-      end
-
-      if jira_issue.status.in_progress?
-        ui.say("#{issue} is already in progress...")
-        return
-      end
-
-      proceed_option = ui.ask_with_answers("Are you going to work on #{issue}?\n", ["yes", "no"])
-      return if proceed_option == "no"
-
-      jira_issue_transitions = @jira_api_client.fetch_issue_transitions(jira_issue)
-      unless jira_issue_transitions
-        ui.error("#{issue} doesn't have any transitions...")
-        return
-      end
-      to_in_progress_transition = jira_issue_transitions.select do |transition|
-        transition.to_status.in_progress?
-      end.first
-      unless to_in_progress_transition
-        ui.error("#{issue} doesn't have transition to 'In Progress' status...")
-        return
-      end
-      jira_issue.make_transition(to_in_progress_transition.id)
-      ui.inform("#{issue} now is 'In Progress' 💪")
+    def try_to_find_jigitfile_path
+      pwd_jigitfile_yaml = Pathname.pwd + "./jigit/Jigitfile.yaml"
+      jigitfile = pwd_jigitfile_yaml if File.exist?(pwd_jigitfile_yaml)
+      return jigitfile unless jigitfile.nil?
+      pwd_jigitfile_yml = Pathname.pwd + "./jigit/Jigitfile.yml"
+      jigitfile = pwd_jigitfile_yml if File.exist?(pwd_jigitfile_yml)
+      return jigitfile unless jigitfile.nil?
+      return nil
     end
   end
 end

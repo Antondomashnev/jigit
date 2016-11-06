@@ -14,9 +14,5 @@ module Jigit
     def name
       @jira_ruby_status.name
     end
-
-    def in_progress?
-      name == "In Progress"
-    end
   end
 end
