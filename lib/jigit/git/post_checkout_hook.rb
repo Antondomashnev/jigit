@@ -1,4 +1,4 @@
-require "jigit/git_hooks/git_hook"
+require "jigit/git/git_hook"
 
 module Jigit
   class PostCheckoutHook < GitHook

@@ -1,6 +1,7 @@
 require "jigit/commands/runner"
 require "jigit/jira/jira_api_client"
 require "jigit/jira/jira_config"
+require "jigit/core/jigitfile"
 
 module Jigit
   class IssueRunner < Runner
@@ -41,10 +42,10 @@ module Jigit
     private
 
     def try_to_find_jigitfile_path
-      pwd_jigitfile_yaml = Pathname.pwd + "./jigit/Jigitfile.yaml"
+      pwd_jigitfile_yaml = Pathname.pwd + ".jigit/Jigitfile.yaml"
       jigitfile = pwd_jigitfile_yaml if File.exist?(pwd_jigitfile_yaml)
       return jigitfile unless jigitfile.nil?
-      pwd_jigitfile_yml = Pathname.pwd + "./jigit/Jigitfile.yml"
+      pwd_jigitfile_yml = Pathname.pwd + ".jigit/Jigitfile.yml"
       jigitfile = pwd_jigitfile_yml if File.exist?(pwd_jigitfile_yml)
       return jigitfile unless jigitfile.nil?
       return nil

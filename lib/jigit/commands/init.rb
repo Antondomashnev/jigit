@@ -3,8 +3,8 @@ require "jigit/jira/jira_config"
 require "jigit/jira/jira_api_client"
 require "jigit/jira/resources/jira_status"
 require "jigit/core/jigitfile_generator"
-require "jigit/git_hooks/git_hook_installer"
-require "jigit/git_hooks/post_checkout_hook"
+require "jigit/git/git_hook_installer"
+require "jigit/git/post_checkout_hook"
 
 module Jigit
   # This class is heavily based on the Init command from the Danger gem
@@ -34,9 +34,10 @@ module Jigit
       show_todo_state
       ui.pause 1.4
 
-      setup_access_to_jira
-      setup_jigitfile
-      setup_post_checkout_hook
+      return unless setup_access_to_jira
+      return unless setup_jigitfile
+      return unless setup_post_checkout_hook
+      return unless setup_gitignore
 
       info
       thanks
@@ -50,6 +51,8 @@ module Jigit
       ui.say " - [ ] Set up a Jigit configuration file."
       ui.pause 0.6
       ui.say " - [ ] Set up a git hooks to automate the process."
+      ui.pause 0.6
+      ui.say " - [ ] Add private jigit's related things to .gitignore."
     end
 
     def ask_for_jira_account_email
@@ -61,7 +64,7 @@ module Jigit
     end
 
     def ask_for_jira_host(polite)
-      ui.ask("What's is the host for your JIRA server?").strip unless polite
+      return ui.ask("What's is the host for your JIRA server").strip unless polite
 
       ui.say "\nThanks, and the last one is a bit tricky. Jigit needs the " + "host".green + " of your JIRA server.\n"
       ui.pause 0.6
@@ -83,7 +86,7 @@ module Jigit
         new_email = ask_for_jira_account_email
         new_password = ask_for_jira_account_password(new_email)
         new_host = ask_for_jira_host(false)
-        validate_jira_account(new_email, new_password, new_host)
+        validate_jira_account?(new_email, new_password, new_host)
       end
     end
 
@@ -105,6 +108,7 @@ module Jigit
         ui.say "Let's move to next step, press return when ready..."
         ui.wait_for_return
       end
+      return true
     end
 
     def fetch_jira_status_names
@@ -165,7 +169,7 @@ module Jigit
       jira_status_names = fetch_jira_status_names
       unless jira_status_names
         handle_nicely_setup_jigitfile_failure
-        return
+        return false
       end
       ui.pause 0.6
 
@@ -184,6 +188,7 @@ module Jigit
       ui.pause 0.6
       ui.say "Let's move to next step, press return when ready..."
       ui.wait_for_return
+      return true
     end
 
     def setup_post_checkout_hook
@@ -205,6 +210,17 @@ module Jigit
       ui.pause 0.6
       ui.say "That's all to finish initialization press return"
       ui.wait_for_return
+      return true
+    end
+
+    def add_to_gitignore
+      ui.header "Step 4: Adding private jigit's related things to .gitignore."
+      ui.say "Jigit has been setup for your personal usage with your personal info"
+      ui.pause 0.6
+      ui.say "therefore it can not be really used accross the team, so we need to git ignore the related files"
+      ui.pause 0.6
+
+      
     end
 
     def info

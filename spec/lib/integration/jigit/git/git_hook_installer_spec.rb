@@ -1,5 +1,5 @@
-require "jigit/git_hooks/git_hook_installer"
-require "jigit/git_hooks/git_hook"
+require "jigit/git/git_hook_installer"
+require "jigit/git/git_hook"
 require "fileutils"
 
 describe Jigit::GitHookInstaller do

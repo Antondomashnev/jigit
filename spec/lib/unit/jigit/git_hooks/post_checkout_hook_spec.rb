@@ -1,4 +1,4 @@
-require "jigit/git_hooks/post_checkout_hook"
+require "jigit/git/post_checkout_hook"
 
 describe Jigit::PostCheckoutHook do
   it "has correct hook lines" do
@@ -9,8 +9,8 @@ describe Jigit::PostCheckoutHook do
                       "  newBranchName=`git symbolic-ref --short HEAD`",
                       "  oldBranchName=`git rev-parse --abbrev-ref @{-1}`",
                       "  if [ $newBranchName != $oldBranchName ]; then",
-                      "    jigit issue start_issue --name=$newBranchName",
-                      "    jigit issue stop_issue --name=$oldBranchName",
+                      "    jigit issue start --name=$newBranchName",
+                      "    jigit issue stop --name=$oldBranchName",
                       "  fi",
                       "fi"]
     expect(Jigit::PostCheckoutHook.hook_lines).to be == expected_lines
