@@ -4,6 +4,7 @@ require "jigit/jira/jira_api_client"
 require "jigit/jira/resources/jira_status"
 require "jigit/core/jigitfile_generator"
 require "jigit/git/git_hook_installer"
+require "jigit/git/git_ignore_updater"
 require "jigit/git/post_checkout_hook"
 
 module Jigit
@@ -38,6 +39,7 @@ module Jigit
       return unless setup_jigitfile
       return unless setup_post_checkout_hook
       return unless setup_gitignore
+      return unless add_to_gitignore
 
       info
       thanks
@@ -208,7 +210,7 @@ module Jigit
       ui.say "And the git hook is ready 🎉.\n"
       ui.say "You can find it at './.git/hooks/post-checkout'"
       ui.pause 0.6
-      ui.say "That's all to finish initialization press return"
+      ui.say "One last step and we're done, press return to continue..."
       ui.wait_for_return
       return true
     end
@@ -220,7 +222,14 @@ module Jigit
       ui.say "therefore it can not be really used accross the team, so we need to git ignore the related files"
       ui.pause 0.6
 
-      
+      git_hook_installer = Jigit::GitIgnoreUpdater.new
+      git_hook_installer.ignore(".jigit")
+
+      ui.say "And the git ignore now ignores your .jigit folder 🎉.\n"
+      ui.pause 0.6
+      ui.say "That's all to finish initialization press return"
+      ui.wait_for_return
+      return true
     end
 
     def info

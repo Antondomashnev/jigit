@@ -22,7 +22,7 @@ module Jigit
 
     private
 
-    def new_status_for_issue(jira_issue)
+    def new_status_for_issue(_jira_issue)
       question = "You've stopped working on '#{@issue_name}', to which status do you want to put it\n"
       new_status = ui.ask_with_answers(question, @jigitfile.other_statuses)
       new_status

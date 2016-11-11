@@ -3,16 +3,16 @@ require "jigit/git/post_checkout_hook"
 describe Jigit::PostCheckoutHook do
   it "is correct" do
     expected_lines = ["#!/usr/bin/env bash",
-     "checkoutType=$3",
-     "[[ $checkoutType == 1 ]] && checkoutType='branch' || checkoutType='file'",
-     "if [ $checkoutType == 'branch' ]; then",
-     "  newBranchName=`git symbolic-ref --short HEAD`",
-     "  oldBranchName=`git rev-parse --abbrev-ref @{-1}`",
-     "  if [ $newBranchName != $oldBranchName ]; then",
-     "    jigit issue start_issue --name=$newBranchName",
-     "    jigit issue stop_issue --name=$oldBranchName",
-     "  fi",
-     "fi"]
+                      "checkoutType=$3",
+                      "[[ $checkoutType == 1 ]] && checkoutType='branch' || checkoutType='file'",
+                      "if [ $checkoutType == 'branch' ]; then",
+                      "  newBranchName=`git symbolic-ref --short HEAD`",
+                      "  oldBranchName=`git rev-parse --abbrev-ref @{-1}`",
+                      "  if [ $newBranchName != $oldBranchName ]; then",
+                      "    jigit issue start --name=$newBranchName",
+                      "    jigit issue stop --name=$oldBranchName",
+                      "  fi",
+                      "fi"]
     expect(Jigit::PostCheckoutHook.hook_lines).to be == expected_lines
   end
 
