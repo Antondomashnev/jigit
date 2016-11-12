@@ -91,6 +91,7 @@ module Jigit
       end
     rescue Jigit::JiraAPIClientError => exception
       ui.error "Error while validating access to JIRA API: #{exception.message}"
+      return false
     end
 
     def setup_access_to_jira
@@ -110,8 +111,10 @@ module Jigit
         Jigit::JiraConfig.store_jira_config(Jigit::JiraConfig.new(email, password, host))
         ui.say "Let's move to next step, press return when ready..."
         ui.wait_for_return
+        return true
+      else
+        return false
       end
-      return true
     end
 
     def fetch_jira_status_names
@@ -128,6 +131,7 @@ module Jigit
         end
       rescue Jigit::JiraAPIClientError => exception
         ui.error "Error while fetching statuses from JIRA API: #{exception.message}"
+        return false
       end
     end
 
