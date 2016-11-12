@@ -77,22 +77,20 @@ module Jigit
     end
 
     def validate_jira_account?(email, password, host)
-      begin
-        is_valid = Jigit::JiraAPIClient.new(Jigit::JiraConfig.new(email, password, host), nil, ui).validate_api?
-        if is_valid
-          ui.inform "Hooray 🎉, everything is green.\n"
-          return true
-        else
-          ui.error "Yikes 😕\n"
-          ui.say "Let's try once again, you can do it 💪\n"
-          new_email = ask_for_jira_account_email
-          new_password = ask_for_jira_account_password(new_email)
-          new_host = ask_for_jira_host(false)
-          validate_jira_account?(new_email, new_password, new_host)
-        end
-      rescue Jigit::JiraAPIClientError => exception
-        ui.error "Error while validating access to JIRA API: #{exception.message}"
+      is_valid = Jigit::JiraAPIClient.new(Jigit::JiraConfig.new(email, password, host), nil, ui).validate_api?
+      if is_valid
+        ui.inform "Hooray 🎉, everything is green.\n"
+        return true
+      else
+        ui.error "Yikes 😕\n"
+        ui.say "Let's try once again, you can do it 💪\n"
+        new_email = ask_for_jira_account_email
+        new_password = ask_for_jira_account_password(new_email)
+        new_host = ask_for_jira_host(false)
+        validate_jira_account?(new_email, new_password, new_host)
       end
+    rescue Jigit::JiraAPIClientError => exception
+      ui.error "Error while validating access to JIRA API: #{exception.message}"
     end
 
     def setup_access_to_jira

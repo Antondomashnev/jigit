@@ -15,7 +15,7 @@ describe Jigit::JigitfileGenerator do
     end
 
     it("writes prepopulated hash into yaml file") do
-      expected_lines = ["---\n", "in_progress_status: In Progress\n", "other_statuses:\n", "- To Do\n", "- In Review\n", "- Done\n"]
+      expected_lines = ["---\n", "in_progress_status: In Progress\n", "other_statuses:\n", "- 1. To Do\n", "- 2. In Review\n", "- 3. Done\n"]
       actual_lines = []
       File.foreach("spec/fixtures/Jigitfile.yml") do |line|
         actual_lines << line

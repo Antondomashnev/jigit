@@ -16,7 +16,7 @@ module Jigit
 
     def write_other_statuses(other_statuses)
       raise "All statuses must be string" if other_statuses.select { |status| !status.kind_of?(String) }.count > 0
-      @jigitfile_hash[JigitfileConstants.other_statuses] = other_statuses
+      @jigitfile_hash[JigitfileConstants.other_statuses] = other_statuses.map.with_index { |status, i| "#{i + 1}. #{status}" }
     end
 
     def save

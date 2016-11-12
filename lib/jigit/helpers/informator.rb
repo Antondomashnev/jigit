@@ -74,8 +74,11 @@ module Jigit
       answer
     end
 
-    def ask_with_answers(question, possible_answers)
+    def ask_with_answers(question, possible_answers, shorten_answers = nil)
       STDIN.reopen(File.open("/dev/tty", "r"))
+      if !shorten_answers.nil? && shorten_answers.count != possible_answers.count
+        raise "If you provide a shorten answers they should be provided for each possible answer"
+      end
 
       ui.print("\n#{question}? [")
       print_possible_answers(possible_answers)
@@ -83,6 +86,10 @@ module Jigit
       loop do
         show_prompt
         answer = read_answer(possible_answers)
+
+        if !shorten_answers.nil? && shorten_answers.include?(answer)
+          answer = possible_answers[shorten_answers.index(answer)]
+        end
 
         break if possible_answers.include? answer
 

@@ -16,9 +16,9 @@ describe Jigit::JiraAPIClient do
           to_return(status: 405, body: "<html><body>Some HTML</body></html>")
       end
 
-      it("returns nil") do
+      it("raises an error") do
         jira_api_client = Jigit::JiraAPIClient.new(config, jira_client)
-        expect(jira_api_client.fetch_jira_statuses).to be_nil
+        expect { jira_api_client.fetch_jira_statuses }.to raise_error "Can not fetch a JIRA statuses: <html><body>Some HTML</body></html>"
       end
     end
 
@@ -30,7 +30,7 @@ describe Jigit::JiraAPIClient do
 
       it("returns nil") do
         jira_api_client = Jigit::JiraAPIClient.new(config, jira_client)
-        expect(jira_api_client.fetch_jira_statuses).to be_nil
+        expect { jira_api_client.fetch_jira_statuses }.to raise_error "Can not fetch a JIRA statuses: {\"errorMessages\":[\"Statuses Do Not Exist\"],\"errors\":{}}"
       end
     end
 
@@ -73,9 +73,9 @@ describe Jigit::JiraAPIClient do
           to_return(status: 405, body: "<html><body>Some HTML</body></html>")
       end
 
-      it("returns nil") do
+      it("raises an error") do
         jira_api_client = Jigit::JiraAPIClient.new(config, jira_client)
-        expect(jira_api_client.fetch_issue_transitions(jira_issue)).to be_nil
+        expect { jira_api_client.fetch_issue_transitions(jira_issue) }.to raise_error "Can not fetch JIRA issue transitions: <html><body>Some HTML</body></html>"
       end
     end
 
@@ -85,9 +85,9 @@ describe Jigit::JiraAPIClient do
           to_return(status: 301, body: "{\"errorMessages\":[\"Transitions Do Not Exist\"],\"errors\":{}}")
       end
 
-      it("returns nil") do
+      it("raises as error") do
         jira_api_client = Jigit::JiraAPIClient.new(config, jira_client)
-        expect(jira_api_client.fetch_issue_transitions(jira_issue)).to be_nil
+        expect { jira_api_client.fetch_issue_transitions(jira_issue) }.to raise_error "Can not fetch JIRA issue transitions: {\"errorMessages\":[\"Transitions Do Not Exist\"],\"errors\":{}}"
       end
     end
 
@@ -120,9 +120,9 @@ describe Jigit::JiraAPIClient do
           to_return(status: 405, body: "<html><body>Some HTML</body></html>")
       end
 
-      it("returns nil") do
+      it("raises an error") do
         jira_api_client = Jigit::JiraAPIClient.new(config, jira_client)
-        expect(jira_api_client.fetch_jira_issue(issue_name)).to be_nil
+        expect { jira_api_client.fetch_jira_issue(issue_name) }.to raise_error "Can not fetch a JIRA issue: <html><body>Some HTML</body></html>"
       end
     end
 
@@ -132,9 +132,9 @@ describe Jigit::JiraAPIClient do
           to_return(status: 301, body: "{\"errorMessages\":[\"Issue Does Not Exist\"],\"errors\":{}}")
       end
 
-      it("returns nil") do
+      it("raises an error") do
         jira_api_client = Jigit::JiraAPIClient.new(config, jira_client)
-        expect(jira_api_client.fetch_jira_issue(issue_name)).to be_nil
+        expect { jira_api_client.fetch_jira_issue(issue_name) }.to raise_error "Can not fetch a JIRA issue: {\"errorMessages\":[\"Issue Does Not Exist\"],\"errors\":{}}"
       end
     end
 
