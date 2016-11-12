@@ -77,7 +77,7 @@ module Jigit
     end
 
     def validate_jira_account?(email, password, host)
-      is_valid = Jigit::JiraAPIClient.new(Jigit::JiraConfig.new(email, password, host), nil, ui).validate_api?
+      is_valid = Jigit::JiraAPIClient.new(Jigit::JiraConfig.new(email, password, host), nil).validate_api?
       if is_valid
         ui.inform "Hooray 🎉, everything is green.\n"
         return true
@@ -116,7 +116,7 @@ module Jigit
 
     def fetch_jira_status_names
       ui.say "Fetching all possible statuses from JIRA...\n"
-      jira_api_client = Jigit::JiraAPIClient.new(Jigit::JiraConfig.current_jira_config, nil, ui)
+      jira_api_client = Jigit::JiraAPIClient.new(Jigit::JiraConfig.current_jira_config, nil)
       begin
         all_statuses = jira_api_client.fetch_jira_statuses
         if all_statuses.nil? || all_statuses.count.zero?
