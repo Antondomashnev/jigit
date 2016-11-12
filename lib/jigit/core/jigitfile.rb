@@ -7,6 +7,8 @@ module Jigit
     attr_accessor :in_progress_status
     # @return [Array] The other possible statuses
     attr_accessor :other_statuses
+    # @return [String] JIRA server host
+    attr_accessor :host
 
     def initialize(path)
       raise "Path is a required parameter" if path.nil?
@@ -15,6 +17,7 @@ module Jigit
       yaml_hash = read_data_from_yaml_file(jigitfile, path)
       self.in_progress_status = yaml_hash[JigitfileConstants.in_progress_status]
       self.other_statuses = yaml_hash[JigitfileConstants.other_statuses]
+      self.host = yaml_hash[JigitfileConstants.host]
     end
 
     private

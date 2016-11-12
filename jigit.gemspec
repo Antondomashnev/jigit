@@ -20,6 +20,7 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = ">= 2.0.0"
 
+  spec.add_runtime_dependency "ruby-keychain", "~> 0.3"
   spec.add_runtime_dependency "claide", "~> 1.0"
   spec.add_runtime_dependency "cork", "~> 0.1"
   spec.add_runtime_dependency "jira-ruby", "~> 1.0"

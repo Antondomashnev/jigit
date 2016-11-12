@@ -2,6 +2,7 @@ require "jigit/commands/runner"
 require "jigit/jira/jira_api_client"
 require "jigit/jira/jira_config"
 require "jigit/core/jigitfile"
+require "jigit/helpers/keychain_storage"
 
 module Jigit
   class IssueRunner < Runner
@@ -18,7 +19,7 @@ module Jigit
       end
       @jigitfile = Jigit::Jigitfile.new(jigitfile)
       @issue_name = argv.option("name")
-      @jira_config = Jigit::JiraConfig.current_jira_config
+      @jira_config = Jigit::KeychainStorage.new.load(jigitfile.host)
       @jira_api_client = Jigit::JiraAPIClient.new(@jira_config, nil) if @jira_config
     end
 

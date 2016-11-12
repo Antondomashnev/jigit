@@ -2,3 +2,4 @@ in_progress_status: "In Progress"
 other_statuses:
 - "To Do"
 - "In Review"
+host: "myhost.atlassian.net"

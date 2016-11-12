@@ -7,5 +7,9 @@ module Jigit
     def self.other_statuses
       "other_statuses"
     end
+
+    def self.host
+      "host"
+    end
   end
 end

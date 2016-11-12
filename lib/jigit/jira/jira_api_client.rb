@@ -30,7 +30,7 @@ module Jigit
     rescue SocketError => exception
       raise Jigit::JiraAPIClientError, "Can not fetch Jira server info: #{exception.message}"
     rescue JIRA::HTTPError => exception
-      raise Jigit::JiraAPIClientError, "Can not fetch Jira server info: #{exception.response.body}"
+      raise Jigit::JiraAPIClientError, "Can not fetch Jira server info: #{exception.message}"
     end
 
     def fetch_issue_transitions(issue)

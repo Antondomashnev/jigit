@@ -6,11 +6,14 @@ require "jigit/core/jigitfile_generator"
 require "jigit/git/git_hook_installer"
 require "jigit/git/git_ignore_updater"
 require "jigit/git/post_checkout_hook"
+require "jigit/helpers/keychain_storage"
 
 module Jigit
   # This class is heavily based on the Init command from the Danger gem
   # The original link is https://github.com/danger/danger/blob/master/lib/danger/commands/init.rb
   class Init < Runner
+    attr_accessor :jira_config
+
     self.summary = "Helps you set up Jigit."
     self.command = "init"
     self.abstract_command = false
@@ -76,22 +79,33 @@ module Jigit
       ui.ask("What's is the host for your JIRA server").strip
     end
 
-    def validate_jira_account?(email, password, host)
-      is_valid = Jigit::JiraAPIClient.new(Jigit::JiraConfig.new(email, password, host), nil).validate_api?
+    def validate_jira_config?(config)
+      is_valid = Jigit::JiraAPIClient.new(config, nil).validate_api?
       if is_valid
         ui.inform "Hooray 🎉, everything is green.\n"
         return true
       else
         ui.error "Yikes 😕\n"
         ui.say "Let's try once again, you can do it 💪\n"
-        new_email = ask_for_jira_account_email
-        new_password = ask_for_jira_account_password(new_email)
-        new_host = ask_for_jira_host(false)
-        validate_jira_account?(new_email, new_password, new_host)
+        return false
+      end
+    end
+
+    def build_jira_config_politely(politely)
+      email = ask_for_jira_account_email
+      password = ask_for_jira_account_password(email)
+      host = ask_for_jira_host(politely)
+
+      ui.say "\nThanks, let's validate if the Jigit has access now...\n" if politely
+      config = Jigit::JiraConfig.new(email, password, host)
+      if validate_jira_config?(config)
+        config
+      else
+        build_jira_config_politely(false)
       end
     rescue Jigit::JiraAPIClientError => exception
       ui.error "Error while validating access to JIRA API: #{exception.message}"
-      return false
+      return nil
     end
 
     def setup_access_to_jira
@@ -102,13 +116,10 @@ module Jigit
       ui.say "But don't worry it'll store it in a safe place.\n"
       ui.pause 1
 
-      email = ask_for_jira_account_email
-      password = ask_for_jira_account_password(email)
-      host = ask_for_jira_host(true)
-
-      ui.say "\nThanks, let's validate if the Jigit has access now...\n"
-      if validate_jira_account?(email, password, host)
-        Jigit::JiraConfig.store_jira_config(Jigit::JiraConfig.new(email, password, host))
+      self.current_jira_config = build_jira_config_politely(true)
+      if self.current_jira_config
+        keychain_storage = Jigit::KeychainStorage.new
+        keychain_storage.save(self.current_jira_config.user, self.current_jira_config.password, self.current_jira_config.host)
         ui.say "Let's move to next step, press return when ready..."
         ui.wait_for_return
         return true
@@ -184,6 +195,9 @@ module Jigit
       end
       ui.pause 0.6
 
+      jigitfile_generator.write_host(self.jira_config.host)
+      ui.pause 0.6
+
       in_progress_status_name = ask_for_in_progress_status_name(jira_status_names)
       jigitfile_generator.write_in_progress_status_name(in_progress_status_name)
       ui.pause 0.6
@@ -206,7 +220,7 @@ module Jigit
       ui.header "Step 3: Setting up a git hooks to automate the process."
       ui.say "Jigit is going to create a post-checkout git hook."
       ui.pause 0.6
-      ui.say "It will the 'git checkout' command and if it's a checkout to a branch"
+      ui.say "It will the 'git checkout' command and if it's a checkout to a branch."
       ui.pause 0.6
       ui.say "Jigit will ask it needs to put the new branch's related issue In Progress"
       ui.pause 0.6
@@ -228,7 +242,7 @@ module Jigit
       ui.header "Step 4: Adding private jigit's related things to .gitignore."
       ui.say "Jigit has been setup for your personal usage with your personal info"
       ui.pause 0.6
-      ui.say "therefore it can not be really used accross the team, so we need to git ignore the related files"
+      ui.say "therefore it can not be really used accross the team, so we need to git ignore the related files."
       ui.pause 0.6
 
       git_hook_installer = Jigit::GitIgnoreUpdater.new

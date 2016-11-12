@@ -24,6 +24,10 @@ describe Jigit::Jigitfile do
       it "assigns other_statuses" do
         expect(subject.other_statuses).to be == ["To Do", "In Review"]
       end
+
+      it "assigns the host" do
+        expect(subject.host).to be == "myhost.atlassian.net"
+      end
     end
   end
 end
