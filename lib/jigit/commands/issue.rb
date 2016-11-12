@@ -18,7 +18,7 @@ module Jigit
       end
       @jigitfile = Jigit::Jigitfile.new(jigitfile)
       @issue_name = argv.option("name")
-      @jira_config = igit::JiraConfig.current_jira_config
+      @jira_config = Jigit::JiraConfig.current_jira_config
       @jira_api_client = Jigit::JiraAPIClient.new(@jira_config, nil) if @jira_config
     end
 
