@@ -19,7 +19,7 @@ module Jigit
       @jigitfile = Jigit::Jigitfile.new(jigitfile)
       @issue_name = argv.option("name")
       @jira_config = Jigit::JiraConfig.new("antondomashnev+jira1@gmail.com", "Anton2104", "antondomashnevjira1.atlassian.net") # Jigit::JiraConfig.current_jira_config
-      @jira_api_client = Jigit::JiraAPIClient.new(@jira_config, nil, ui) if @jira_config
+      @jira_api_client = Jigit::JiraAPIClient.new(@jira_config, nil) if @jira_config
     end
 
     def validate!

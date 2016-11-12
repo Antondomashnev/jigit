@@ -1,4 +1,5 @@
 require "jigit/commands/issue"
+require "jigit/jira/jira_transition_finder"
 
 module Jigit
   class StopIssueRunner < IssueRunner
@@ -8,16 +9,20 @@ module Jigit
 
     def run
       self
-      jira_issue = @jira_api_client.fetch_jira_issue(@issue_name)
-      new_status = new_status_for_issue(jira_issue)
-      transition_finder = Jigit::JiraTransitionFinder(@jira_api_client.fetch_issue_transitions(jira_issue))
-      to_new_status_transition = transition_finder.find_transition_to(new_status)
-      unless to_new_status_transition
-        ui.error("#{jira_issue} doesn't have transition to '#{new_status}' status...")
-        return
+      begin
+        jira_issue = @jira_api_client.fetch_jira_issue(@issue_name)
+        new_status = new_status_for_issue(jira_issue)
+        transition_finder = Jigit::JiraTransitionFinder.new(@jira_api_client.fetch_issue_transitions(jira_issue))
+        to_new_status_transition = transition_finder.find_transition_to(new_status)
+        unless to_new_status_transition
+          ui.error("#{jira_issue.key} doesn't have transition to '#{new_status}' status...")
+          return
+        end
+        jira_issue.make_transition(to_new_status_transition.id)
+        ui.inform("#{jira_issue.key} now is '#{new_status}' 🎉")
+      rescue Jigit::JiraAPIClientError => exception
+        ui.error "Error while executing issue stop command: #{exception.message}"
       end
-      jira_issue.make_transition(to_new_status_transition.id)
-      ui.inform("#{jira_issue} now is '#{new_status}' 🎉")
     end
 
     private

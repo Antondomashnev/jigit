@@ -31,6 +31,29 @@ describe Jigit::JiraIssue do
     end
   end
 
+  describe(".name") do
+    let(:issue) do
+      base_issue = JIRA::Resource::Issue.new(jira_client, attrs: {
+        "id" => "10002",
+        "key" => "ADT-1",
+        "self" => "http://localhost:2990/jira/rest/api/2/issue/10002",
+        "fields" => {
+          "assignee" => {
+                        "self" => "http://localhost:2990/jira/rest/api/2/user?username=admin",
+                        "name" => "admin",
+                        "emailAddress" => "admin@example.com"
+                      }
+        }
+      })
+      issue = Jigit::JiraIssue.new(base_issue)
+      issue
+    end
+
+    it("returns issue key") do
+      expect(issue.key).to be == "ADT-1"
+    end
+  end
+
   describe(".assignee_name") do
     let(:issue) do
       base_issue = JIRA::Resource::Issue.new(jira_client, attrs: {

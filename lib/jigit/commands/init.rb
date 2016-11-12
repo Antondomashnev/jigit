@@ -39,7 +39,6 @@ module Jigit
       return unless setup_jigitfile
       return unless setup_post_checkout_hook
       return unless setup_gitignore
-      return unless add_to_gitignore
 
       info
       thanks
@@ -78,17 +77,21 @@ module Jigit
     end
 
     def validate_jira_account?(email, password, host)
-      is_valid = Jigit::JiraAPIClient.new(Jigit::JiraConfig.new(email, password, host), nil, ui).validate_api?
-      if is_valid
-        ui.inform "Hooray 🎉, everything is green.\n"
-        return true
-      else
-        ui.error "Yikes 😕\n"
-        ui.say "Let's try once again, you can do it 💪\n"
-        new_email = ask_for_jira_account_email
-        new_password = ask_for_jira_account_password(new_email)
-        new_host = ask_for_jira_host(false)
-        validate_jira_account?(new_email, new_password, new_host)
+      begin
+        is_valid = Jigit::JiraAPIClient.new(Jigit::JiraConfig.new(email, password, host), nil, ui).validate_api?
+        if is_valid
+          ui.inform "Hooray 🎉, everything is green.\n"
+          return true
+        else
+          ui.error "Yikes 😕\n"
+          ui.say "Let's try once again, you can do it 💪\n"
+          new_email = ask_for_jira_account_email
+          new_password = ask_for_jira_account_password(new_email)
+          new_host = ask_for_jira_host(false)
+          validate_jira_account?(new_email, new_password, new_host)
+        end
+      rescue Jigit::JiraAPIClientError => exception
+        ui.error "Error while validating access to JIRA API: #{exception.message}"
       end
     end
 
@@ -116,13 +119,17 @@ module Jigit
     def fetch_jira_status_names
       ui.say "Fetching all possible statuses from JIRA...\n"
       jira_api_client = Jigit::JiraAPIClient.new(Jigit::JiraConfig.current_jira_config, nil, ui)
-      all_statuses = jira_api_client.fetch_jira_statuses
-      if all_statuses.nil? || all_statuses.count.zero?
-        ui.error "Yikes 😕\n"
-        ui.say "Jigit can not find any statuses for JIRA issue in your company setup.\n"
-        return nil
-      else
-        all_statuses.map(&:name)
+      begin
+        all_statuses = jira_api_client.fetch_jira_statuses
+        if all_statuses.nil? || all_statuses.count.zero?
+          ui.error "Yikes 😕\n"
+          ui.say "Jigit can not find any statuses for JIRA issue in your company setup.\n"
+          return nil
+        else
+          all_statuses.map(&:name)
+        end
+      rescue Jigit::JiraAPIClientError => exception
+        ui.error "Error while fetching statuses from JIRA API: #{exception.message}"
       end
     end
 
@@ -215,7 +222,7 @@ module Jigit
       return true
     end
 
-    def add_to_gitignore
+    def setup_gitignore
       ui.header "Step 4: Adding private jigit's related things to .gitignore."
       ui.say "Jigit has been setup for your personal usage with your personal info"
       ui.pause 0.6
