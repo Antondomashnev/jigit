@@ -46,8 +46,7 @@ module Jigit
 
     def ask_for_new_status_for_issue
       question = "You've stopped working on '#{@issue_name}', to which status do you want to put it\n"
-      shorten_answers = Array.new(@jigitfile.other_statuses.count) { |e| "#{e + 1}" }
-      new_status = ui.ask_with_answers(question, @jigitfile.other_statuses, shorten_answers)
+      new_status = ui.ask_with_answers(question, @jigitfile.other_statuses, true)
       new_status
     end
   end

@@ -74,19 +74,21 @@ module Jigit
       answer
     end
 
-    def ask_with_answers(question, possible_answers, numerated?)
+    def ask_with_answers(question, possible_answers, is_numerated = false)
       STDIN.reopen(File.open("/dev/tty", "r"))
 
       ui.print("\n#{question}? [")
-      possible_answers_to_print = numerated? ? possible_answers.map.with_index { |answer, index| "#{index}. #{answer}" } : possible_answers
+      possible_answers_to_print = is_numerated ? possible_answers.map.with_index { |answer, index| "#{index}. #{answer}" } : possible_answers
       print_possible_answers(possible_answers_to_print)
       answer = ""
       loop do
         show_prompt
         answer = read_answer(possible_answers)
 
-        if numerated?
-          answer = possible_answers[shorten_answers.index(answer)]
+        if is_numerated
+          numerated_answer = Integer(answer) rescue break
+          break if numerated_answer < 0 && possible_answers.count <= numerated_answer
+          answer = possible_answers[numerated_answer]
         end
 
         break if possible_answers.include? answer
