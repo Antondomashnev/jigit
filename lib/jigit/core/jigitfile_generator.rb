@@ -9,6 +9,11 @@ module Jigit
       @jigitfile_hash = {}
     end
 
+    def write_jira_host(host)
+      raise "Host can not be empty" if host.nil? || host.empty?
+      @jigitfile_hash[JigitfileConstants.host] = host
+    end
+
     def write_in_progress_status_name(name)
       raise "In progress status name can not be empty" if name.nil? || name.empty?
       @jigitfile_hash[JigitfileConstants.in_progress_status] = name

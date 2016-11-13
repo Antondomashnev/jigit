@@ -1,7 +1,7 @@
 require "jigit/git/post_checkout_hook"
 
 describe Jigit::PostCheckoutHook do
-  it "has correct hook lines" do
+  it "is correct" do
     expected_lines = ["#!/usr/bin/env bash",
                       "checkoutType=$3",
                       "[[ $checkoutType == 1 ]] && checkoutType='branch' || checkoutType='file'",

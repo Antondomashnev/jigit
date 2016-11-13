@@ -1,4 +1,4 @@
-require "jigit/git_hooks/git_hook"
+require "jigit/git/git_hook"
 
 module Jigit
   class PostCheckoutHook < GitHook
@@ -10,8 +10,8 @@ module Jigit
        "  newBranchName=`git symbolic-ref --short HEAD`",
        "  oldBranchName=`git rev-parse --abbrev-ref @{-1}`",
        "  if [ $newBranchName != $oldBranchName ]; then",
-       "    jigit issue start_issue --name=$newBranchName",
-       "    jigit issue stop_issue --name=$oldBranchName",
+       "    jigit issue start --name=$newBranchName",
+       "    jigit issue stop --name=$oldBranchName",
        "  fi",
        "fi"]
     end

@@ -11,11 +11,12 @@ describe Jigit::JigitfileGenerator do
       generator = Jigit::JigitfileGenerator.new("spec/fixtures/")
       generator.write_in_progress_status_name("In Progress")
       generator.write_other_statuses(["To Do", "In Review", "Done"])
+      generator.write_jira_host("myhost.atlassian.net")
       generator.save
     end
 
     it("writes prepopulated hash into yaml file") do
-      expected_lines = ["---\n", "in_progress_status: In Progress\n", "other_statuses:\n", "- To Do\n", "- In Review\n", "- Done\n"]
+      expected_lines = ["---\n", "in_progress_status: In Progress\n", "other_statuses:\n", "- To Do\n", "- In Review\n", "- Done\n", "host: myhost.atlassian.net\n"]
       actual_lines = []
       File.foreach("spec/fixtures/Jigitfile.yml") do |line|
         actual_lines << line

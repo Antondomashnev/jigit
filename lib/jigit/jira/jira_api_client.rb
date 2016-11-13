@@ -2,14 +2,14 @@ require "jira-ruby"
 require "jigit/jira/resources/jira_issue"
 require "jigit/jira/resources/jira_status"
 require "jigit/jira/resources/jira_transition"
+require "jigit/jira/jira_api_client_error"
 
 module Jigit
   class JiraAPIClient
-    def initialize(config, jira_client = nil, informator = nil)
+    def initialize(config, jira_client = nil)
       raise "Config must not be nil to use JiraHelper" unless config
       @config = config
       @jira_client = jira_client
-      @informator = informator
     end
 
     def jira_client
@@ -27,9 +27,10 @@ module Jigit
     def validate_api?
       serverinfo = jira_client.ServerInfo.all
       return !serverinfo.nil?
+    rescue SocketError => exception
+      raise Jigit::NetworkError, "Can not fetch Jira server info: #{exception.message}"
     rescue JIRA::HTTPError => exception
-      @informator.error("Can not fetch Jira server info: #{exception.response.body}") if @informator
-      return false
+      raise Jigit::JiraAPIClientError, "Can not fetch Jira server info: #{exception.message}"
     end
 
     def fetch_issue_transitions(issue)
@@ -40,9 +41,10 @@ module Jigit
         transitions.map do |transition|
           Jigit::JiraTransition.new(transition)
         end
+      rescue SocketError => exception
+        raise Jigit::NetworkError, "Can not fetch JIRA issue transitions: #{exception.message}"
       rescue JIRA::HTTPError => exception
-        @informator.error("Can not fetch Jira issue transitions: #{exception.response.body}") if @informator
-        return nil
+        raise Jigit::JiraAPIClientError, "Can not fetch JIRA issue transitions: #{exception.response.body}"
       end
     end
 
@@ -52,9 +54,14 @@ module Jigit
         issue = jira_client.Issue.jql("key = #{issue_name}").first
         return nil unless issue
         Jigit::JiraIssue.new(issue)
+      rescue SocketError => exception
+        raise Jigit::NetworkError, "Can not fetch a JIRA issue: #{exception.message}"
       rescue JIRA::HTTPError => exception
-        @informator.error("Can not fetch a JIRA issue: #{exception.response.body}") if @informator
-        return nil
+        error = case exception.response.code
+                when "400" then Jigit::JiraInvalidIssueKeyError
+                else Jigit::JiraAPIClientError
+                end
+        raise error, "Can not fetch a JIRA issue: #{exception.response.body}"
       end
     end
 
@@ -64,9 +71,10 @@ module Jigit
       statuses.map do |status|
         Jigit::JiraStatus.new(status)
       end
+    rescue SocketError => exception
+      raise Jigit::NetworkError, "Can not fetch a JIRA statuses: #{exception.message}"
     rescue JIRA::HTTPError => exception
-      @informator.error("Can not fetch a JIRA statuses: #{exception.response.body}") if @informator
-      return nil
+      raise Jigit::JiraAPIClientError, "Can not fetch a JIRA statuses: #{exception.response.body}"
     end
   end
 end

@@ -10,6 +10,10 @@ module Jigit
       @jira_ruby_issue = jira_ruby_issue
     end
 
+    def key
+      @jira_ruby_issue.key
+    end
+
     def status
       Jigit::JiraStatus.new(@jira_ruby_issue.status)
     end

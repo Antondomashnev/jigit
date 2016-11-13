@@ -58,6 +58,8 @@ module Jigit
     end
 
     def ask(question)
+      STDIN.reopen(File.open("/dev/tty", "r"))
+
       answer = ""
       loop do
         ui.puts "\n#{question}?"
@@ -72,13 +74,26 @@ module Jigit
       answer
     end
 
-    def ask_with_answers(question, possible_answers)
+    def ask_with_answers(question, possible_answers, is_numerated = false)
+      STDIN.reopen(File.open("/dev/tty", "r"))
+
       ui.print("\n#{question}? [")
-      print_possible_answers(possible_answers)
+      possible_answers_to_print = is_numerated ? possible_answers.map.with_index { |answer, index| "#{index}. #{answer}" } : possible_answers
+      print_possible_answers(possible_answers_to_print)
       answer = ""
       loop do
         show_prompt
         answer = read_answer(possible_answers)
+
+        if is_numerated
+          numerated_answer = begin
+                               Integer(answer)
+                             rescue
+                               break
+                             end
+          break if numerated_answer < 0 && possible_answers.count <= numerated_answer
+          answer = possible_answers[numerated_answer]
+        end
 
         break if possible_answers.include? answer
 
@@ -91,7 +106,8 @@ module Jigit
     private
 
     def read_answer(possible_answers)
-      answer = @no_waiting ? possible_answers[0] : STDIN.gets.chomp
+      answer = @no_waiting ? possible_answers[0] : STDIN.gets
+      answer = answer.chomp unless answer.nil?
       answer = "yes" if answer == "y"
       answer = "no" if answer == "n"
 
