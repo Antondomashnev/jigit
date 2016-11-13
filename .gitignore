@@ -54,3 +54,6 @@ build-iPhoneSimulator/
 # jira related
 rsacert.pem
 rsakey.pem
+
+# simplecov
+coverage

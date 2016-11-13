@@ -16,5 +16,5 @@ before_install:
   - bundle install
 
 script:
-  - bundle install
   - bundle exec rake spec
+  - bundle exec danger --verbose
