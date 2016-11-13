@@ -4,4 +4,4 @@ source "https://rubygems.org"
 gemspec
 
 gem "danger", "~> 4.0"
-gem "danger-junit"
+gem "danger-junit", "~> 0.7"
