@@ -13,22 +13,29 @@ module Jigit
         jira_issue = @jira_api_client.fetch_jira_issue(@issue_name)
         return unless could_start_working_on_issue?(jira_issue, @issue_name)
         return unless want_to_start_working_on_issue?(jira_issue)
-
-        transition_finder = Jigit::JiraTransitionFinder.new(@jira_api_client.fetch_issue_transitions(jira_issue))
-        to_in_progress_transition = transition_finder.find_transition_to(@jigitfile.in_progress_status)
-        unless to_in_progress_transition
-          ui.error("#{issue.key} doesn't have transition to '#{@jigitfile.in_progress_status}' status...")
-          return
-        end
-
-        jira_issue.make_transition(to_in_progress_transition.id)
-        ui.inform("#{issue.key} now is '#{@jigitfile.in_progress_status}' 💪")
+        put_issue_to_in_progress(jira_issue)
+      rescue Jigit::JiraInvalidIssueKeyError => exception
+        ui.say "#{@issue_name} doesn't exist on JIRA, skipping..."
       rescue Jigit::JiraAPIClientError => exception
+        ui.error "Error while executing issue start command: #{exception.message}"
+      rescue Jigit::NetworkError => exception
         ui.error "Error while executing issue start command: #{exception.message}"
       end
     end
 
     private
+
+    def put_issue_to_in_progress(jira_issue)
+      transition_finder = Jigit::JiraTransitionFinder.new(@jira_api_client.fetch_issue_transitions(jira_issue))
+      to_in_progress_transition = transition_finder.find_transition_to(@jigitfile.in_progress_status)
+      unless to_in_progress_transition
+        ui.error("#{issue.key} doesn't have transition to '#{@jigitfile.in_progress_status}' status...")
+        return
+      end
+
+      jira_issue.make_transition(to_in_progress_transition.id)
+      ui.inform("#{@issue_name} now is '#{@jigitfile.in_progress_status}' 💪")
+    end
 
     def want_to_start_working_on_issue?(jira_issue)
       proceed_option = ui.ask_with_answers("Are you going to work on #{jira_issue.key}?\n", ["yes", "no"])

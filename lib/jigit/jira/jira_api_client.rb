@@ -28,7 +28,7 @@ module Jigit
       serverinfo = jira_client.ServerInfo.all
       return !serverinfo.nil?
     rescue SocketError => exception
-      raise Jigit::JiraAPIClientError, "Can not fetch Jira server info: #{exception.message}"
+      raise Jigit::NetworkError, "Can not fetch Jira server info: #{exception.message}"
     rescue JIRA::HTTPError => exception
       raise Jigit::JiraAPIClientError, "Can not fetch Jira server info: #{exception.message}"
     end
@@ -42,7 +42,7 @@ module Jigit
           Jigit::JiraTransition.new(transition)
         end
       rescue SocketError => exception
-        raise Jigit::JiraAPIClientError, "Can not fetch JIRA issue transitions: #{exception.message}"
+        raise Jigit::NetworkError, "Can not fetch JIRA issue transitions: #{exception.message}"
       rescue JIRA::HTTPError => exception
         raise Jigit::JiraAPIClientError, "Can not fetch JIRA issue transitions: #{exception.response.body}"
       end
@@ -55,9 +55,13 @@ module Jigit
         return nil unless issue
         Jigit::JiraIssue.new(issue)
       rescue SocketError => exception
-        raise Jigit::JiraAPIClientError, "Can not fetch a JIRA issue: #{exception.message}"
+        raise Jigit::NetworkError, "Can not fetch a JIRA issue: #{exception.message}"
       rescue JIRA::HTTPError => exception
-        raise Jigit::JiraAPIClientError, "Can not fetch a JIRA issue: #{exception.response.body}"
+        error = case exception.response.code
+        when "400" then Jigit::JiraInvalidIssueKeyError
+        else Jigit::JiraAPIClientError
+        end
+        raise error, "Can not fetch a JIRA issue: #{exception.response.code}"
       end
     end
 
@@ -68,7 +72,7 @@ module Jigit
         Jigit::JiraStatus.new(status)
       end
     rescue SocketError => exception
-      raise Jigit::JiraAPIClientError, "Can not fetch a JIRA statuses: #{exception.message}"
+      raise Jigit::NetworkError, "Can not fetch a JIRA statuses: #{exception.message}"
     rescue JIRA::HTTPError => exception
       raise Jigit::JiraAPIClientError, "Can not fetch a JIRA statuses: #{exception.response.body}"
     end

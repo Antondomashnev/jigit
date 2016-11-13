@@ -12,7 +12,7 @@ module Jigit
   # This class is heavily based on the Init command from the Danger gem
   # The original link is https://github.com/danger/danger/blob/master/lib/danger/commands/init.rb
   class Init < Runner
-    attr_accessor :jira_config
+    attr_accessor :current_jira_config
 
     self.summary = "Helps you set up Jigit."
     self.command = "init"
@@ -89,6 +89,10 @@ module Jigit
         ui.say "Let's try once again, you can do it 💪\n"
         return false
       end
+    rescue Jigit::JiraAPIClientError => exception
+      ui.error "Yikes 😕\n"
+      ui.say "Let's try once again, you can do it 💪\n"
+      return false
     end
 
     def build_jira_config_politely(politely)
@@ -103,7 +107,7 @@ module Jigit
       else
         build_jira_config_politely(false)
       end
-    rescue Jigit::JiraAPIClientError => exception
+    rescue Jigit::NetworkError => exception
       ui.error "Error while validating access to JIRA API: #{exception.message}"
       return nil
     end
@@ -130,7 +134,7 @@ module Jigit
 
     def fetch_jira_status_names
       ui.say "Fetching all possible statuses from JIRA...\n"
-      jira_api_client = Jigit::JiraAPIClient.new(Jigit::JiraConfig.current_jira_config, nil)
+      jira_api_client = Jigit::JiraAPIClient.new(self.current_jira_config, nil)
       begin
         all_statuses = jira_api_client.fetch_jira_statuses
         if all_statuses.nil? || all_statuses.count.zero?
@@ -141,6 +145,9 @@ module Jigit
           all_statuses.map(&:name)
         end
       rescue Jigit::JiraAPIClientError => exception
+        ui.error "Error while fetching statuses from JIRA API: #{exception.message}"
+        return false
+      rescue Jigit::NetworkError => exception
         ui.error "Error while fetching statuses from JIRA API: #{exception.message}"
         return false
       end
@@ -195,7 +202,7 @@ module Jigit
       end
       ui.pause 0.6
 
-      jigitfile_generator.write_host(self.jira_config.host)
+      jigitfile_generator.write_jira_host(self.current_jira_config.host)
       ui.pause 0.6
 
       in_progress_status_name = ask_for_in_progress_status_name(jira_status_names)

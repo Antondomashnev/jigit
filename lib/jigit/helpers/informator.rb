@@ -74,20 +74,18 @@ module Jigit
       answer
     end
 
-    def ask_with_answers(question, possible_answers, shorten_answers = nil)
+    def ask_with_answers(question, possible_answers, numerated?)
       STDIN.reopen(File.open("/dev/tty", "r"))
-      if !shorten_answers.nil? && shorten_answers.count != possible_answers.count
-        raise "If you provide a shorten answers they should be provided for each possible answer"
-      end
 
       ui.print("\n#{question}? [")
-      print_possible_answers(possible_answers)
+      possible_answers_to_print = numerated? ? possible_answers.map.with_index { |answer, index| "#{index}. #{answer}" } : possible_answers
+      print_possible_answers(possible_answers_to_print)
       answer = ""
       loop do
         show_prompt
         answer = read_answer(possible_answers)
 
-        if !shorten_answers.nil? && shorten_answers.include?(answer)
+        if numerated?
           answer = possible_answers[shorten_answers.index(answer)]
         end
 

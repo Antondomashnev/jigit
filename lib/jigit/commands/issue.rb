@@ -19,7 +19,8 @@ module Jigit
       end
       @jigitfile = Jigit::Jigitfile.new(jigitfile)
       @issue_name = argv.option("name")
-      @jira_config = Jigit::KeychainStorage.new.load(jigitfile.host)
+      keychain_item = Jigit::KeychainStorage.new.load_item(@jigitfile.host)
+      @jira_config = Jigit::JiraConfig.new(keychain_item.account, keychain_item.password, keychain_item.service)
       @jira_api_client = Jigit::JiraAPIClient.new(@jira_config, nil) if @jira_config
     end
 
