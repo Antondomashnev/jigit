@@ -14,7 +14,7 @@ module Jigit
         return unless issue_exists?(jira_issue)
         new_status = ask_for_new_status_for_issue
         put_issue_to_status(jira_issue, new_status)
-      rescue Jigit::JiraInvalidIssueKeyError => exception
+      rescue Jigit::JiraInvalidIssueKeyError
         ui.say "#{@issue_name} doesn't exist on JIRA, skipping..."
       rescue Jigit::NetworkError => exception
         ui.error "Error while executing issue stop command: #{exception.message}"

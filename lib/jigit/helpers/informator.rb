@@ -86,7 +86,11 @@ module Jigit
         answer = read_answer(possible_answers)
 
         if is_numerated
-          numerated_answer = Integer(answer) rescue break
+          numerated_answer = begin
+                               Integer(answer)
+                             rescue
+                               break
+                             end
           break if numerated_answer < 0 && possible_answers.count <= numerated_answer
           answer = possible_answers[numerated_answer]
         end

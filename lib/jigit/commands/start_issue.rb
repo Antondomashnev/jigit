@@ -14,7 +14,7 @@ module Jigit
         return unless could_start_working_on_issue?(jira_issue, @issue_name)
         return unless want_to_start_working_on_issue?(jira_issue)
         put_issue_to_in_progress(jira_issue)
-      rescue Jigit::JiraInvalidIssueKeyError => exception
+      rescue Jigit::JiraInvalidIssueKeyError
         ui.say "#{@issue_name} doesn't exist on JIRA, skipping..."
       rescue Jigit::JiraAPIClientError => exception
         ui.error "Error while executing issue start command: #{exception.message}"

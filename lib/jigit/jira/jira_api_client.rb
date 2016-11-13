@@ -58,10 +58,10 @@ module Jigit
         raise Jigit::NetworkError, "Can not fetch a JIRA issue: #{exception.message}"
       rescue JIRA::HTTPError => exception
         error = case exception.response.code
-        when "400" then Jigit::JiraInvalidIssueKeyError
-        else Jigit::JiraAPIClientError
-        end
-        raise error, "Can not fetch a JIRA issue: #{exception.response.code}"
+                when "400" then Jigit::JiraInvalidIssueKeyError
+                else Jigit::JiraAPIClientError
+                end
+        raise error, "Can not fetch a JIRA issue: #{exception.response.body}"
       end
     end
 

@@ -89,7 +89,7 @@ module Jigit
         ui.say "Let's try once again, you can do it 💪\n"
         return false
       end
-    rescue Jigit::JiraAPIClientError => exception
+    rescue Jigit::JiraAPIClientError
       ui.error "Yikes 😕\n"
       ui.say "Let's try once again, you can do it 💪\n"
       return false
