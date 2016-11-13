@@ -57,3 +57,4 @@ rsakey.pem
 
 # simplecov
 coverage
+junit-results.xml
