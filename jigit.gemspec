@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["antondomashnev@gmail.com"]
   spec.description   = Jigit::DESCRIPTION
   spec.summary       = "Keep the status of the JIRA issue always in sync with your local git"
-  spec.homepage      = "https://github.com/Antondomashnev/nabokov"
+  spec.homepage      = "https://github.com/Antondomashnev/jigit"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($INPUT_RECORD_SEPARATOR)
