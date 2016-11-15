@@ -188,20 +188,22 @@ module Jigit
       return selected_status_names
     end
 
-    def setup_jigitfile
-      jigitfile_generator = Jigit::JigitfileGenerator.new
-
+    def setup_jigitfile_into
       ui.header "Step 2: Setting up a Jigit configuration file"
       ui.say "In order to Jigit to be able to help you it needs to know something about your usual workflow.\n"
       ui.pause 1
+    end
 
-      jira_status_names = fetch_jira_status_names
-      unless jira_status_names
-        handle_nicely_setup_jigitfile_failure
-        return false
-      end
+    def setup_jigitfile_outro
+      ui.say "And the jigitfile is ready 🎉.\n"
+      ui.say "You can find it at './.jigit/Jigitfile.yml'"
       ui.pause 0.6
+      ui.say "Let's move to next step, press return when ready..."
+      ui.wait_for_return
+    end
 
+    def setup_jigitfile_with_user_input
+      jigitfile_generator = Jigit::JigitfileGenerator.new
       jigitfile_generator.write_jira_host(self.current_jira_config.host)
       ui.pause 0.6
 
@@ -214,16 +216,25 @@ module Jigit
       ui.pause 0.6
 
       jigitfile_generator.save
+    end
 
-      ui.say "And the jigitfile is ready 🎉.\n"
-      ui.say "You can find it at './.jigit/Jigitfile.yml'"
+    def setup_jigitfile
+      setup_jigitfile_into
+
+      jira_status_names = fetch_jira_status_names
+      unless jira_status_names
+        handle_nicely_setup_jigitfile_failure
+        return false
+      end
       ui.pause 0.6
-      ui.say "Let's move to next step, press return when ready..."
-      ui.wait_for_return
+
+      setup_jigitfile_with_user_input
+      setup_jigitfile_outro
+
       return true
     end
 
-    def setup_post_checkout_hook
+    def setup_post_checkout_hook_intro
       ui.header "Step 3: Setting up a git hooks to automate the process."
       ui.say "Jigit is going to create a post-checkout git hook."
       ui.pause 0.6
@@ -232,33 +243,51 @@ module Jigit
       ui.say "Jigit will ask it needs to put the new branch's related issue In Progress"
       ui.pause 0.6
       ui.say "and to update status for the old branch on JIRA"
+    end
 
-      git_hook_installer = Jigit::GitHookInstaller.new
-      post_checkout_hook = Jigit::PostCheckoutHook
-      git_hook_installer.install(post_checkout_hook)
-
+    def setup_post_checkout_hook_outro
       ui.say "And the git hook is ready 🎉.\n"
       ui.say "You can find it at './.git/hooks/post-checkout'"
       ui.pause 0.6
       ui.say "One last step and we're done, press return to continue..."
       ui.wait_for_return
+    end
+
+    def setup_post_checkout_hook
+      setup_post_checkout_hook_intro
+
+      git_hook_installer = Jigit::GitHookInstaller.new
+      post_checkout_hook = Jigit::PostCheckoutHook
+      git_hook_installer.install(post_checkout_hook)
+
+      setup_post_checkout_hook_outro
+
       return true
     end
 
-    def setup_gitignore
+    def setup_gitignore_intro
       ui.header "Step 4: Adding private jigit's related things to .gitignore."
       ui.say "Jigit has been setup for your personal usage with your personal info"
       ui.pause 0.6
       ui.say "therefore it can not be really used accross the team, so we need to git ignore the related files."
       ui.pause 0.6
+    end
 
-      git_hook_installer = Jigit::GitIgnoreUpdater.new
-      git_hook_installer.ignore(".jigit")
-
+    def setup_gitignore_outro
       ui.say "And the git ignore now ignores your .jigit folder 🎉.\n"
       ui.pause 0.6
       ui.say "That's all to finish initialization press return"
       ui.wait_for_return
+    end
+
+    def setup_gitignore
+      setup_gitignore_intro
+
+      git_hook_installer = Jigit::GitIgnoreUpdater.new
+      git_hook_installer.ignore(".jigit")
+
+      setup_gitignore_outro
+
       return true
     end
 
