@@ -1,6 +1,7 @@
 ## jigit
 
 [![Build Status](https://travis-ci.org/Antondomashnev/jigit.svg?branch=master)](https://travis-ci.org/Antondomashnev/jigit)
+[![codebeat badge](https://codebeat.co/badges/05115118-11ff-49bb-9b84-73070afb0f3c)](https://codebeat.co/projects/github-com-antondomashnev-jigit)
 
 Keep you JIRA issue statuses in sync with what you're doing actually.
 
