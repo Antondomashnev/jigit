@@ -60,7 +60,7 @@ After that step, you're set 🚀
 ### Limitation
 
 Currently, `jigit` works only on `OS X`, requires `ruby-2.2.3`. Also, it's based on the git hooks
-and therefore doesn't work with the source control UI app, but only with by using `git` in the command line.
+and therefore doesn't work with the source control UI app, but only by using `git` in the command line.
 
 ### License
 
