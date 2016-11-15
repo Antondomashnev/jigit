@@ -16,14 +16,14 @@ have 2 JIRA issues in `TO DO` in our list: `CNI-1798`, `CNI-1799`.
 * You're going to work on `CNI-1798` first;
 * `git checkout -b CNI-1798`;
 * `jigit` will change the status of `CNI-1798` on JIRA to `In Progress`
-  or whatever you set up as a `work in progress` status :tada;
+  or whatever you set up as a `work in progress` status 🎉;
 * Suddenly you have to switch to the higher priority `CNI-1799`;
 * `git checkout -b CNI-1799`;
 * `jigit` will ask you for a new status for `CNI-1798`, which I suppose a kind of `To Do`,
   and update status of `CNI-1799`;
 
 And you can jump between branches as much as you want, but you will never ever have the wrong status for you JIRA issue :rocket.
-You are happy, a project manager is happy - the world becomes a bit better :smile.
+You are 😀, a project manager is 😀 - the world becomes a bit better 🙌
 
 ### Example
 
@@ -54,7 +54,7 @@ The `jigit` configuration is guided by a friendly interviewer by the following c
 $ bundle exec jigit init
 ```
 
-After that step, you're set :rocket
+After that step, you're set 🚀
 
 ### Limitation
 
