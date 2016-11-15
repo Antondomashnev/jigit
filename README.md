@@ -1,5 +1,7 @@
 ## jigit
 
+[![Build Status](https://travis-ci.org/Antondomashnev/jigit.svg?branch=master)](https://travis-ci.org/Antondomashnev/jigit)
+
 Keep you JIRA issue statuses in sync with what you're doing actually.
 
 ### How it works?
