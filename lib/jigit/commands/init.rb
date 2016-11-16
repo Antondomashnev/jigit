@@ -162,7 +162,7 @@ module Jigit
     end
 
     def ask_for_in_progress_status_name(status_names)
-      in_progress_status_name = ui.ask_with_answers("What status do you set when work on the JIRA issue\n", status_names)
+      in_progress_status_name = ui.ask_with_answers("What status do you set when work on the JIRA issue\n", status_names, true)
       in_progress_status_name
     end
 
@@ -180,7 +180,7 @@ module Jigit
       loop do
         selected_status_names << selected_status_name unless selected_status_name.nil?
         break if not_asked_status_names.count.zero?
-        selected_status_name = ui.ask_with_answers("Which one you want to select", not_asked_status_names + ["nothing"])
+        selected_status_name = ui.ask_with_answers("Which one you want to select", not_asked_status_names + ["nothing"], true)
         break if selected_status_name == "nothing"
         ui.say selected_status_name
         not_asked_status_names.delete(selected_status_name)
