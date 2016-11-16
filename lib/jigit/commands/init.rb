@@ -89,7 +89,7 @@ module Jigit
         ui.say "Let's try once again, you can do it 💪\n"
         return false
       end
-    rescue Jigit::JiraAPIClientError
+    rescue Jigit::JiraAPIClientError => exception
       ui.error "Yikes 😕\n"
       ui.say "Let's try once again, you can do it 💪\n"
       return false
@@ -202,7 +202,7 @@ module Jigit
       ui.wait_for_return
     end
 
-    def setup_jigitfile_with_user_input
+    def setup_jigitfile_with_user_input(jira_status_names)
       jigitfile_generator = Jigit::JigitfileGenerator.new
       jigitfile_generator.write_jira_host(self.current_jira_config.host)
       ui.pause 0.6
@@ -228,7 +228,7 @@ module Jigit
       end
       ui.pause 0.6
 
-      setup_jigitfile_with_user_input
+      setup_jigitfile_with_user_input(jira_status_names)
       setup_jigitfile_outro
 
       return true
