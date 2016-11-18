@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    jigit (1.0.0)
+    jigit (1.0.1)
       claide (~> 1.0)
       cork (~> 0.1)
       jira-ruby (~> 1.0)
