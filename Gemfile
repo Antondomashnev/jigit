@@ -5,3 +5,4 @@ gemspec
 
 gem "danger", "~> 4.0"
 gem "danger-simplecov_json", "~> 0.2"
+gem "danger-changelog", "~> 0.1"
