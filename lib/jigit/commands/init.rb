@@ -89,7 +89,7 @@ module Jigit
         ui.say "Let's try once again, you can do it 💪\n"
         return false
       end
-    rescue Jigit::JiraAPIClientError
+    rescue Jigit::JiraAPIClientError => exception
       ui.error "Yikes 😕\n"
       ui.say "Let's try once again, you can do it 💪\n"
       return false
@@ -162,7 +162,7 @@ module Jigit
     end
 
     def ask_for_in_progress_status_name(status_names)
-      in_progress_status_name = ui.ask_with_answers("What status do you set when work on the JIRA issue\n", status_names)
+      in_progress_status_name = ui.ask_with_answers("What status do you set when work on the JIRA issue\n", status_names, true)
       in_progress_status_name
     end
 
@@ -180,7 +180,7 @@ module Jigit
       loop do
         selected_status_names << selected_status_name unless selected_status_name.nil?
         break if not_asked_status_names.count.zero?
-        selected_status_name = ui.ask_with_answers("Which one you want to select", not_asked_status_names + ["nothing"])
+        selected_status_name = ui.ask_with_answers("Which one you want to select", not_asked_status_names + ["nothing"], true)
         break if selected_status_name == "nothing"
         ui.say selected_status_name
         not_asked_status_names.delete(selected_status_name)
@@ -202,7 +202,7 @@ module Jigit
       ui.wait_for_return
     end
 
-    def setup_jigitfile_with_user_input
+    def setup_jigitfile_with_user_input(jira_status_names)
       jigitfile_generator = Jigit::JigitfileGenerator.new
       jigitfile_generator.write_jira_host(self.current_jira_config.host)
       ui.pause 0.6
@@ -228,7 +228,7 @@ module Jigit
       end
       ui.pause 0.6
 
-      setup_jigitfile_with_user_input
+      setup_jigitfile_with_user_input(jira_status_names)
       setup_jigitfile_outro
 
       return true
