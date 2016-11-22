@@ -3,6 +3,7 @@
 ## 1.0.2
 
 * Your contribution here.
+# [#18](https://github.com/Antondomashnev/jigit/pull/18): Issue command crash - [@antondomashnev](https://github.com/antondomashnev).
 
 ## 1.0.1
 
