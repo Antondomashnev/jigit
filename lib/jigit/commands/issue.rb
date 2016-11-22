@@ -3,6 +3,7 @@ require "jigit/jira/jira_api_client"
 require "jigit/jira/jira_config"
 require "jigit/core/jigitfile"
 require "jigit/helpers/keychain_storage"
+require "pathname"
 
 module Jigit
   class IssueRunner < Runner
